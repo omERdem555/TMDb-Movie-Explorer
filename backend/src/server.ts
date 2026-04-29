@@ -1,28 +1,34 @@
-import { Request, Response } from "express";
-import { getPopularMovies } from "./services/tmdb.service";
-import { mapMovie } from "./utils/mapper";
+import express from "express";
+import cors from "cors";
+import movieRoutes from "./routes/movies.routes";
 
-export const getPopular = async (req: Request, res: Response) => {
-  const page = Number(req.query.page) || 1;
+const app = express();
+const PORT = 5000;
 
-  if (!Number.isInteger(page) || page < 1) {
-    return res.status(400).json({
-      success: false,
-      error: {
-        code: "INVALID_QUERY",
-        message: "page must be a positive integer",
-      },
-    });
-  }
+/**
+ * Core middleware
+ */
+app.use(cors());
+app.use(express.json());
 
-  const data = await getPopularMovies(page);
+/**
+ * Routes
+ */
+app.use("/api/movies", movieRoutes);
 
-  const mapped = data.results.map(mapMovie);
-
+/**
+ * Health check
+ */
+app.get("/", (req, res) => {
   res.json({
     success: true,
-    page: data.page,
-    totalPages: data.total_pages,
-    data: mapped,
+    message: "TMDb Movie Explorer API is running...",
   });
-};
+});
+
+/**
+ * Start server
+ */
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
