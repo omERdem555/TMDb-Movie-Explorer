@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { env } from "./config/env";
 import movieRoutes from "./routes/movies.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
 const PORT = env.PORT;
@@ -19,3 +20,5 @@ app.get("/", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.use(errorHandler);
