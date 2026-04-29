@@ -11,12 +11,12 @@ const tmdbClient = axios.create({
 });
 
 // 1. Popular movies
-export const getPopularMovies = async () => {
-  try {
-    const response = await tmdbClient.get("/movie/popular");
-    return response.data;
-  } catch (error: any) {
-    console.log("TMDB ERROR:", error.response?.data || error.message);
-    throw error;
-  }
+export const getPopularMovies = async (page: number = 1) => {
+  const response = await tmdbClient.get("/movie/popular", {
+    params: {
+      page,
+    },
+  });
+
+  return response.data;
 };
