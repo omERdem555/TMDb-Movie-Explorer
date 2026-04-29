@@ -49,3 +49,19 @@ export const searchMovies = async (query: string, page: number = 1) => {
 
   return res.data;
 };
+
+export const getMoviesByType = async (type: string, page: number = 1) => {
+  const endpoints: Record<string, string> = {
+    popular: "/movie/popular",
+    top_rated: "/movie/top_rated",
+    upcoming: "/movie/upcoming",
+  };
+
+  const endpoint = endpoints[type] || endpoints.popular;
+
+  const res = await tmdbClient.get(endpoint, {
+    params: { page },
+  });
+
+  return res.data;
+};
