@@ -6,16 +6,19 @@ type Props = {
 };
 
 export default function MovieGrid({ movies }: Props) {
-  if (!movies || movies.length === 0) {
-    return <div>No movies found</div>;
+  if (!movies.length) {
+    return <p>No movies found.</p>;
   }
 
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-      gap: "16px"
-    }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        gap: "20px",
+        padding: "20px 0",
+      }}
+    >
       {movies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} />
       ))}
