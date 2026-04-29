@@ -13,8 +13,9 @@ export const useMovies = (type: string, page: number) => {
         setLoading(true);
         setError(null);
 
-        const res = await fetchMovies(type, page);
-        setData(res.data);
+        const movies = await fetchMovies(type, page);
+
+        setData(movies); // ✅ düz Movie[]
       } catch (err) {
         setError("Failed to load movies");
       } finally {
