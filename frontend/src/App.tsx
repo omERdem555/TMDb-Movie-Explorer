@@ -1,14 +1,5 @@
-import { useEffect } from "react";
-import { fetchMovies } from "./api/movies.api";
+import Home from "./pages/Home";
 
-function App() {
-  useEffect(() => {
-    fetchMovies("popular", 1).then((res) => {
-      console.log("API TEST:", res);
-    });
-  }, []);
-
-  return <div>Movie App</div>;
+export default function App() {
+  return <Home />;
 }
-
-export default App;

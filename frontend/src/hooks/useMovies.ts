@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchMovies } from "../api/movies.api";
 import type { Movie } from "../types/movie.types";
+import { fetchMovies } from "../api/movies.api";
 
 export const useMovies = (type: string, page: number) => {
   const [data, setData] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export const useMovies = (type: string, page: number) => {
         const res = await fetchMovies(type, page);
         setData(res.data);
       } catch (err) {
-        setError("Failed to fetch movies");
+        setError("Failed to load movies");
       } finally {
         setLoading(false);
       }
