@@ -11,20 +11,44 @@ export default function Home() {
   const handleTypeChange = (newType: string) => {
     setType(newType);
     setPage(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNextPage = () => {
+    setPage((prev) => prev + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>TMDb Movie Explorer</h1>
 
-      <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+      <div
+        style={{
+          marginBottom: "20px",
+          display: "flex",
+          gap: "10px",
+          flexWrap: "wrap",
+        }}
+      >
         <button onClick={() => handleTypeChange("popular")}>Popular</button>
-        <button onClick={() => handleTypeChange("top_rated")}>Top Rated</button>
-        <button onClick={() => handleTypeChange("upcoming")}>Upcoming</button>
+        <button onClick={() => handleTypeChange("top_rated")}>
+          Top Rated
+        </button>
+        <button onClick={() => handleTypeChange("upcoming")}>
+          Upcoming
+        </button>
       </div>
 
       <p>
-        Current Type: <strong>{type}</strong> | Page: <strong>{page}</strong>
+        Category: <strong>{type}</strong> | Page: <strong>{page}</strong>
       </p>
 
       {loading && <div>Loading movies...</div>}
@@ -33,15 +57,19 @@ export default function Home() {
 
       {!loading && !error && <MovieGrid movies={data} />}
 
-      <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
+      <div
+        style={{
+          marginTop: "30px",
+          display: "flex",
+          gap: "10px",
+          justifyContent: "center",
+        }}
+      >
+        <button onClick={handlePrevPage} disabled={page === 1}>
           Previous
         </button>
 
-        <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
+        <button onClick={handleNextPage}>Next</button>
       </div>
     </div>
   );
