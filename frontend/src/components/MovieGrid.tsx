@@ -15,8 +15,8 @@ export default function MovieGrid({ movies, loading }: Props) {
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(6, 1fr)",
-        gap: "20px",
-        padding: "20px 0",
+        gap: "25px",
+        padding: "20px 0"
       }}
     >
       {loading

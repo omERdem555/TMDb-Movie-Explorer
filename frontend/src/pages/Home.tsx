@@ -7,7 +7,7 @@ import type { Movie } from "../types/movie.types";
 const API_BASE = "http://localhost:5000/api";
 
 export default function Home() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const type = searchParams.get("type") || "popular";
   const search = searchParams.get("search") || "";
@@ -17,6 +17,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 🔥 DATA FETCH
   useEffect(() => {
     const load = async () => {
       try {
@@ -29,6 +30,7 @@ export default function Home() {
 
         let movies: Movie[] = res.data.data;
 
+        // search filter (type korunur)
         if (search.trim().length > 0) {
           const q = search.toLowerCase();
 
@@ -36,6 +38,9 @@ export default function Home() {
             m.title.toLowerCase().includes(q)
           );
         }
+
+        // 🔥 18 film limit
+        movies = movies.slice(0, 18);
 
         setData(movies);
       } catch (err) {
@@ -48,32 +53,29 @@ export default function Home() {
     load();
   }, [type, search, page]);
 
-  // 🧨 ERROR STATE (EN ÜST PRIORITY)
+  // 🔥 RESET PAGE ON TYPE/SEARCH CHANGE
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("page", "1");
+      return next;
+    });
+  }, [type, search]);
+
+  // 🧨 ERROR STATE
   if (error) {
     return (
-      <div
-        style={{
-          padding: 40,
-          textAlign: "center",
-          color: "#ff6b6b",
-        }}
-      >
+      <div style={{ padding: 40, textAlign: "center", color: "#ff6b6b" }}>
         <h2>Something went wrong</h2>
         <p>{error}</p>
       </div>
     );
   }
 
-  // 🧠 EMPTY STATE (loading bittikten sonra)
+  // 🧠 EMPTY STATE
   if (!loading && data.length === 0) {
     return (
-      <div
-        style={{
-          padding: 40,
-          textAlign: "center",
-          color: "#888",
-        }}
-      >
+      <div style={{ padding: 40, textAlign: "center", color: "#888" }}>
         <h3>No movies found</h3>
         <p>Try changing your search or category</p>
       </div>
@@ -85,6 +87,36 @@ export default function Home() {
       <h1>{type.toUpperCase()} Movies</h1>
 
       <MovieGrid movies={data} loading={loading} />
+
+      {/* PAGINATION */}
+      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+        <button
+          onClick={() =>
+            setSearchParams((prev) => {
+              const next = new URLSearchParams(prev);
+              next.set("page", String(Math.max(1, page - 1)));
+              return next;
+            })
+          }
+          disabled={page === 1}
+        >
+          Prev
+        </button>
+
+        <span>Page: {page}</span>
+
+        <button
+          onClick={() =>
+            setSearchParams((prev) => {
+              const next = new URLSearchParams(prev);
+              next.set("page", String(page + 1));
+              return next;
+            })
+          }
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
