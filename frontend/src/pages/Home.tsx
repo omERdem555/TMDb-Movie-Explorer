@@ -23,14 +23,12 @@ export default function Home() {
         setLoading(true);
         setError(null);
 
-        // 1) DISCOVER
         const res = await axios.get(`${API_BASE}/movies/discover`, {
           params: { type, page },
         });
 
         let movies: Movie[] = res.data.data;
 
-        // 2) SEARCH FILTER (type korunur)
         if (search.trim().length > 0) {
           const q = search.toLowerCase();
 
@@ -50,18 +48,43 @@ export default function Home() {
     load();
   }, [type, search, page]);
 
+  // 🧨 ERROR STATE (EN ÜST PRIORITY)
+  if (error) {
+    return (
+      <div
+        style={{
+          padding: 40,
+          textAlign: "center",
+          color: "#ff6b6b",
+        }}
+      >
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  // 🧠 EMPTY STATE (loading bittikten sonra)
+  if (!loading && data.length === 0) {
+    return (
+      <div
+        style={{
+          padding: 40,
+          textAlign: "center",
+          color: "#888",
+        }}
+      >
+        <h3>No movies found</h3>
+        <p>Try changing your search or category</p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: 20 }}>
       <h1>{type.toUpperCase()} Movies</h1>
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {!loading && !error && data.length === 0 && (
-        <p>No results found</p>
-      )}
-
-      <MovieGrid movies={data} />
+      <MovieGrid movies={data} loading={loading} />
     </div>
   );
 }
