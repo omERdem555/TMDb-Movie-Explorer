@@ -2,20 +2,33 @@ import { useEffect, useState } from "react";
 import type { Movie } from "../types/movie.types";
 import { fetchMovies } from "../api/movies.api";
 
-export const useMovies = (type: string, page: number) => {
-  const [data, setData] = useState<Movie[]>([]);
+const MOVIES_PER_PAGE = 20;
+const PREFETCH_PAGES = 5;
+
+export const useMovies = (type: string, currentPage: number) => {
+  const [allMovies, setAllMovies] = useState<Movie[]>([]);
+  const [visibleMovies, setVisibleMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Type değişince baştan yükle
   useEffect(() => {
-    const load = async () => {
+    const loadBatch = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const movies = await fetchMovies(type, page);
+        const requests = [];
 
-        setData(movies); // ✅ düz Movie[]
+        for (let page = 1; page <= PREFETCH_PAGES; page++) {
+          requests.push(fetchMovies(type, page));
+        }
+
+        const results = await Promise.all(requests);
+
+        const merged = results.flat();
+
+        setAllMovies(merged);
       } catch (err) {
         setError("Failed to load movies");
       } finally {
@@ -23,8 +36,21 @@ export const useMovies = (type: string, page: number) => {
       }
     };
 
-    load();
-  }, [type, page]);
+    loadBatch();
+  }, [type]);
 
-  return { data, loading, error };
+  // Current page değişince local slice
+  useEffect(() => {
+    const start = (currentPage - 1) * MOVIES_PER_PAGE;
+    const end = start + MOVIES_PER_PAGE;
+
+    setVisibleMovies(allMovies.slice(start, end));
+  }, [currentPage, allMovies]);
+
+  return {
+    data: visibleMovies,
+    loading,
+    error,
+    totalLoaded: allMovies.length,
+  };
 };
