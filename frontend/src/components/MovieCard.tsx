@@ -1,33 +1,40 @@
 import type { Movie } from "../types/movie.types";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   movie: Movie;
 };
 
 export default function MovieCard({ movie }: Props) {
-  const shortOverview =
-    movie.overview.length > 100
-      ? movie.overview.slice(0, 100) + "..."
-      : movie.overview;
+  const navigate = useNavigate();
 
   return (
-    <Link
-      to={`/movie/${movie.id}`}
+    <div
+      onClick={() => navigate(`/movie/${movie.id}`)}
       style={{
-        textDecoration: "none",
-        color: "inherit",
+        cursor: "pointer",
+        borderRadius: 10,
+        overflow: "hidden",
+        background: "#1a1a1a",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget.style.transform = "scale(1.03)");
+        (e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.4)");
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget.style.transform = "scale(1)");
+        (e.currentTarget.style.boxShadow = "none");
       }}
     >
+      {/* POSTER */}
       <div
         style={{
-          border: "1px solid #ddd",
-          padding: 10,
-          borderRadius: "8px",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          cursor: "pointer",
+          position: "relative",
+          width: "100%",
+          aspectRatio: "2 / 3",
+          overflow: "hidden",
+          background: "#111",
         }}
       >
         {movie.posterUrl ? (
@@ -36,33 +43,68 @@ export default function MovieCard({ movie }: Props) {
             alt={movie.title}
             style={{
               width: "100%",
-              borderRadius: "4px",
-              marginBottom: "10px",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
             }}
           />
         ) : (
           <div
             style={{
               width: "100%",
-              height: "375px",
+              height: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#f0f0f0",
-              marginBottom: "10px",
-              borderRadius: "4px",
+              color: "#666",
+              fontSize: 12,
             }}
           >
             No Image
           </div>
         )}
 
-        <h3>{movie.title}</h3>
-
-        <p>{shortOverview}</p>
-
-        <small>⭐ {movie.rating}</small>
+        {/* RATING BADGE */}
+        <div
+          style={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            background: "rgba(0,0,0,0.7)",
+            padding: "4px 8px",
+            borderRadius: 6,
+            fontSize: 12,
+            color: "#fff",
+          }}
+        >
+          ⭐ {movie.rating}
+        </div>
       </div>
-    </Link>
+
+      {/* CONTENT */}
+      <div style={{ padding: 10 }}>
+        <h3
+          style={{
+            fontSize: 14,
+            margin: "0 0 6px 0",
+            color: "#fff",
+          }}
+        >
+          {movie.title}
+        </h3>
+
+        <p
+          style={{
+            fontSize: 12,
+            color: "#aaa",
+            lineHeight: 1.4,
+          }}
+        >
+          {movie.overview.length > 80
+            ? movie.overview.slice(0, 80) + "..."
+            : movie.overview}
+        </p>
+      </div>
+    </div>
   );
 }
