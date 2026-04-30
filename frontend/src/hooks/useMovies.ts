@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Movie } from "../types/movie.types";
-import { fetchMovies, searchMovies } from "../api/movies.api";
+import { fetchMovies } from "../api/movies.api";
 
 export const useMovies = (type: string, page: number, search: string) => {
   const [data, setData] = useState<Movie[]>([]);
@@ -13,32 +13,25 @@ export const useMovies = (type: string, page: number, search: string) => {
         setLoading(true);
         setError(null);
 
-        let res;
+        const res = await fetchMovies(type, page);
 
-        // Search mode
-        if (search && search.trim().length > 0) {
-          res = await searchMovies(search, page);
-        }
-        // Discover mode
-        else {
-          res = await fetchMovies(type, page);
+        let movies = res.data;
+
+        if (search.trim().length > 0) {
+          movies = movies.filter((m) =>
+            m.title.toLowerCase().includes(search.toLowerCase())
+          );
         }
 
-        // Backend contract: { success: true, data: [...] }
-        setData(res.data);
-      } catch (err) {
+        setData(movies);
+      } catch {
         setError("Failed to load movies");
       } finally {
         setLoading(false);
       }
     };
 
-    // ⏱️ debounce (API spam önleme)
-    const timeout = setTimeout(() => {
-      load();
-    }, 300);
-
-    return () => clearTimeout(timeout);
+    load();
   }, [type, page, search]);
 
   return { data, loading, error };

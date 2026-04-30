@@ -42,9 +42,16 @@ export const getMovieById = async (id: string) => {
   return res.data;
 };
 
-export const searchMovies = async (query: string, page: number = 1) => {
+export const searchMovies = async (
+  query: string,
+  page: number = 1,
+  type?: string
+) => {
   const res = await tmdbClient.get("/search/movie", {
-    params: { query, page },
+    params: {
+      query,
+      page,
+    },
   });
 
   return res.data;

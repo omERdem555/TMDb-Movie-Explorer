@@ -12,7 +12,10 @@ export default function Header() {
     e.preventDefault();
     if (!query.trim()) return;
 
-    navigate(`/?search=${encodeURIComponent(query)}`);
+    // 🔥 CRITICAL FIX: type korunuyor
+    navigate(
+      `/?type=${activeType}&search=${encodeURIComponent(query)}`
+    );
   };
 
   const linkStyle = (type: string) => ({
@@ -22,7 +25,7 @@ export default function Header() {
 
   return (
     <header style={{ padding: 15, display: "flex", gap: 20 }}>
-      <Link to="/">TMDb Explorer</Link>
+      <Link to="/?type=popular">TMDb Explorer</Link>
 
       <Link to="/?type=popular" style={linkStyle("popular")}>
         Popular

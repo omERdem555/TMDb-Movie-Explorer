@@ -143,28 +143,26 @@ export const getMovieDetail = async (req: Request, res: Response) => {
 export const search = async (req: Request, res: Response) => {
   try {
     const query = String(req.query.query || "").trim();
-    const { value: page, valid } = validatePage(req.query.page);
+    const type = String(req.query.type || "popular");
+    const page = Number(req.query.page) || 1;
 
     if (!query) {
-      return res
-        .status(400)
-        .json(createError("INVALID_QUERY", "search query is required"));
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "INVALID_QUERY",
+          message: "search query is required",
+        },
+      });
     }
 
-    if (!valid) {
-      return res
-        .status(400)
-        .json(createError("INVALID_QUERY", "page must be a positive integer"));
-    }
-
-    const data = await searchMovies(query, page);
+    const data = await searchMovies(query, page, type);
 
     res.status(200).json({
       success: true,
-      query,
       page: data.page,
       totalPages: data.total_pages,
-      data: data.results.map(mapMovie),
+      data: data.results,
     });
   } catch (error) {
     console.log(error);

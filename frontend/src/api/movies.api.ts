@@ -1,14 +1,17 @@
 import axios from "axios";
 import type { Movie } from "../types/movie.types";
 
+const API_BASE = "http://localhost:5000/api";
+
 type ApiResponse = {
   success: boolean;
   data: Movie[];
 };
 
-const API_BASE = "http://localhost:5000/api";
-
-export const fetchMovies = async (type: string, page: number = 1): Promise<ApiResponse> => {
+export const fetchMovies = async (
+  type: string,
+  page: number = 1
+): Promise<ApiResponse> => {
   const res = await axios.get(`${API_BASE}/movies/discover`, {
     params: { type, page },
   });
@@ -16,9 +19,13 @@ export const fetchMovies = async (type: string, page: number = 1): Promise<ApiRe
   return res.data;
 };
 
-export const searchMovies = async (query: string, page: number = 1): Promise<ApiResponse> => {
+export const searchMovies = async (
+  query: string,
+  type: string,
+  page: number = 1
+): Promise<ApiResponse> => {
   const res = await axios.get(`${API_BASE}/movies/search`, {
-    params: { query, page },
+    params: { query, type, page },
   });
 
   return res.data;
