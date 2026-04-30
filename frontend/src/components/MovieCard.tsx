@@ -19,12 +19,12 @@ export default function MovieCard({ movie }: Props) {
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget.style.transform = "scale(1.03)");
-        (e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.4)");
+        e.currentTarget.style.transform = "scale(1.03)";
+        e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.4)";
       }}
       onMouseLeave={(e) => {
-        (e.currentTarget.style.transform = "scale(1)");
-        (e.currentTarget.style.boxShadow = "none");
+        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.boxShadow = "none";
       }}
     >
       {/* POSTER */}
@@ -64,17 +64,21 @@ export default function MovieCard({ movie }: Props) {
           </div>
         )}
 
-        {/* RATING BADGE */}
+        {/* ⭐ RATING BADGE (FAZ 9.3 UYUMLU) */}
         <div
           style={{
             position: "absolute",
             top: 8,
             right: 8,
-            background: "rgba(0,0,0,0.7)",
+            background:
+              movie.rating >= 7
+                ? "rgba(46, 204, 113, 0.9)"
+                : "rgba(243, 156, 18, 0.9)",
             padding: "4px 8px",
             borderRadius: 6,
             fontSize: 12,
             color: "#fff",
+            fontWeight: 500,
           }}
         >
           ⭐ {movie.rating}

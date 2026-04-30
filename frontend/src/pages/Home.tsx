@@ -83,11 +83,11 @@ export default function Home() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="container">
       <h1>{type.toUpperCase()} Movies</h1>
 
       <MovieGrid movies={data} loading={loading} />
-
+      
       {/* PAGINATION */}
       <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
         <button

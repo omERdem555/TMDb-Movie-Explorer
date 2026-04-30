@@ -20,3 +20,20 @@ body {
   --space-lg: 24px;
   --space-xl: 32px;
 }
+
+/* layout system */
+.container {
+  width: 1120px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.section {
+  padding: 24px 0;
+}
+
+input:focus {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}

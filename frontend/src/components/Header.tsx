@@ -71,42 +71,33 @@ export default function Header() {
           position: "relative",
         }}
       >
-        <div style={{ position: "relative" }}>
-          <input
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setIsTyping(true);
-            }}
-            onBlur={() => setIsTyping(false)}
-            placeholder="Search movies..."
-            style={{
-              padding: "8px 32px 8px 10px",
-              borderRadius: 6,
-              border: "1px solid #333",
-              outline: "none",
-            }}
-          />
+      <div style={{ position: "relative" }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search movies..."
+          style={{
+            paddingRight: 30,
+            outline: "none",
+          }}
+        />
 
-          {/* CLEAR BUTTON */}
-          {query.length > 0 && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              style={{
-                position: "absolute",
-                right: 6,
-                top: 6,
-                border: "none",
-                background: "transparent",
-                color: "#999",
-                cursor: "pointer",
-              }}
-            >
-              ✕
-            </button>
-          )}
-        </div>
+        {query.length > 0 && (
+          <button
+            onClick={() => setQuery("")}
+            style={{
+              position: "absolute",
+              right: 5,
+              top: 2,
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+            }}
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
         {/* INLINE LOADING FEEDBACK */}
         {isTyping && (
