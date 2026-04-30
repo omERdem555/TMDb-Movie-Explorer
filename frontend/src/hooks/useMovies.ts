@@ -1,34 +1,36 @@
 import { useEffect, useState } from "react";
 import type { Movie } from "../types/movie.types";
-import { fetchMovies } from "../api/movies.api";
+import { fetchMovies, searchMovies } from "../api/movies.api";
 
-const MOVIES_PER_PAGE = 20;
-const PREFETCH_PAGES = 5;
-
-export const useMovies = (type: string, currentPage: number) => {
-  const [allMovies, setAllMovies] = useState<Movie[]>([]);
-  const [visibleMovies, setVisibleMovies] = useState<Movie[]>([]);
+export const useMovies = (
+  type: string,
+  page: number,
+  search: string
+) => {
+  const [data, setData] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Type değişince baştan yükle
   useEffect(() => {
-    const loadBatch = async () => {
+    const load = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const requests = [];
+        let res;
 
-        for (let page = 1; page <= PREFETCH_PAGES; page++) {
-          requests.push(fetchMovies(type, page));
+        // Search mode
+        if (search && search.trim().length > 0) {
+          res = await searchMovies(search, page);
+        }
+        // Discover mode
+        else {
+          res = await fetchMovies(type, page);
         }
 
-        const results = await Promise.all(requests);
-
-        const merged = results.flat();
-
-        setAllMovies(merged);
+        // Backend contract:
+        // { success: true, data: [...] }
+        setData(res.data);
       } catch (err) {
         setError("Failed to load movies");
       } finally {
@@ -36,21 +38,8 @@ export const useMovies = (type: string, currentPage: number) => {
       }
     };
 
-    loadBatch();
-  }, [type]);
+    load();
+  }, [type, page, search]);
 
-  // Current page değişince local slice
-  useEffect(() => {
-    const start = (currentPage - 1) * MOVIES_PER_PAGE;
-    const end = start + MOVIES_PER_PAGE;
-
-    setVisibleMovies(allMovies.slice(start, end));
-  }, [currentPage, allMovies]);
-
-  return {
-    data: visibleMovies,
-    loading,
-    error,
-    totalLoaded: allMovies.length,
-  };
+  return { data, loading, error };
 };
