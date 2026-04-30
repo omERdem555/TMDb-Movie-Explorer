@@ -1,21 +1,32 @@
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [query, setQuery] = useState("");
 
   const activeType = searchParams.get("type") || "popular";
+  const urlSearch = searchParams.get("search") || "";
+
+  const [query, setQuery] = useState(urlSearch);
+  const [isTyping, setIsTyping] = useState(false);
+
+  // URL değişirse input sync
+  useEffect(() => {
+    setQuery(urlSearch);
+  }, [urlSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    // 🔥 CRITICAL FIX: type korunuyor
-    navigate(
-      `/?type=${activeType}&search=${encodeURIComponent(query)}`
-    );
+    navigate(`/?type=${activeType}&search=${encodeURIComponent(query)}`);
+    setIsTyping(false);
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    navigate(`/?type=${activeType}`);
   };
 
   const linkStyle = (type: string) => ({
@@ -24,9 +35,19 @@ export default function Header() {
   });
 
   return (
-    <header style={{ padding: 15, display: "flex", gap: 20 }}>
+    <header
+      style={{
+        padding: "12px 16px",
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        borderBottom: "1px solid #222",
+      }}
+    >
+      {/* BRAND */}
       <Link to="/?type=popular">TMDb Explorer</Link>
 
+      {/* NAV */}
       <Link to="/?type=popular" style={linkStyle("popular")}>
         Popular
       </Link>
@@ -39,12 +60,60 @@ export default function Header() {
         Upcoming
       </Link>
 
-      <form onSubmit={handleSearch} style={{ marginLeft: "auto" }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search movies..."
-        />
+      {/* SEARCH */}
+      <form
+        onSubmit={handleSearch}
+        style={{
+          marginLeft: "auto",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          position: "relative",
+        }}
+      >
+        <div style={{ position: "relative" }}>
+          <input
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsTyping(true);
+            }}
+            onBlur={() => setIsTyping(false)}
+            placeholder="Search movies..."
+            style={{
+              padding: "8px 32px 8px 10px",
+              borderRadius: 6,
+              border: "1px solid #333",
+              outline: "none",
+            }}
+          />
+
+          {/* CLEAR BUTTON */}
+          {query.length > 0 && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              style={{
+                position: "absolute",
+                right: 6,
+                top: 6,
+                border: "none",
+                background: "transparent",
+                color: "#999",
+                cursor: "pointer",
+              }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* INLINE LOADING FEEDBACK */}
+        {isTyping && (
+          <span style={{ fontSize: 12, color: "#888" }}>
+            typing...
+          </span>
+        )}
       </form>
     </header>
   );
