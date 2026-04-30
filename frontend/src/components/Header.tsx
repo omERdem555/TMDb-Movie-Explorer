@@ -1,70 +1,47 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Header() {
-  const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const activeType = searchParams.get("type") || "popular";
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!query.trim()) return;
 
-    const trimmed = query.trim();
-
-    if (!trimmed) return;
-
-    navigate(`/?search=${encodeURIComponent(trimmed)}`);
+    navigate(`/?search=${encodeURIComponent(query)}`);
   };
 
+  const linkStyle = (type: string) => ({
+    fontWeight: activeType === type ? "bold" : "normal",
+    textDecoration: activeType === type ? "underline" : "none",
+  });
+
   return (
-    <header
-      style={{
-        padding: "15px 30px",
-        borderBottom: "1px solid #ddd",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: "15px",
-      }}
-    >
-      <nav
-        style={{
-          display: "flex",
-          gap: "15px",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <Link to="/" style={{ fontWeight: "bold", fontSize: "20px" }}>
-          TMDb Explorer
-        </Link>
+    <header style={{ padding: 15, display: "flex", gap: 20 }}>
+      <Link to="/">TMDb Explorer</Link>
 
-        <Link to="/?type=popular">Popular</Link>
+      <Link to="/?type=popular" style={linkStyle("popular")}>
+        Popular
+      </Link>
 
-        <Link to="/?type=top_rated">Top Rated</Link>
+      <Link to="/?type=top_rated" style={linkStyle("top_rated")}>
+        Top Rated
+      </Link>
 
-        <Link to="/?type=upcoming">Upcoming</Link>
-      </nav>
+      <Link to="/?type=upcoming" style={linkStyle("upcoming")}>
+        Upcoming
+      </Link>
 
-      <form
-        onSubmit={handleSearch}
-        style={{
-          display: "flex",
-          gap: "10px",
-        }}
-      >
+      <form onSubmit={handleSearch} style={{ marginLeft: "auto" }}>
         <input
-          type="text"
-          placeholder="Search movies..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{
-            padding: "8px",
-            minWidth: "220px",
-          }}
+          placeholder="Search movies..."
         />
-
-        <button type="submit">Search</button>
       </form>
     </header>
   );

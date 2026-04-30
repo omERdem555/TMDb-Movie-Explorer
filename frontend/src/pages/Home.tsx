@@ -24,8 +24,9 @@ export default function Home() {
           : type.replace("_", " ").toUpperCase()}
       </h1>
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {loading &&  <p>Loading movies...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {data.length === 0 && !loading && !error && <p>No movies found.</p>}
 
       {!loading && !error && <MovieGrid movies={data} />}
 
