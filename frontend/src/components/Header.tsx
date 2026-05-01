@@ -11,7 +11,6 @@ export default function Header() {
   const [query, setQuery] = useState(urlSearch);
   const [searching, setSearching] = useState(false);
 
-  // URL → input sync
   useEffect(() => {
     setQuery(urlSearch);
   }, [urlSearch]);
@@ -21,19 +20,14 @@ export default function Header() {
 
     setSearching(true);
 
-    // boşsa search temizlenir ama type korunur
     if (!query.trim()) {
       navigate(`/?type=${activeType}&page=1`);
       setTimeout(() => setSearching(false), 300);
       return;
     }
 
-    // 🔥 KRİTİK FIX:
-    // type + search + page birlikte korunur
     navigate(
-      `/?type=${activeType}&search=${encodeURIComponent(
-        query
-      )}&page=1`
+      `/?type=${activeType}&search=${encodeURIComponent(query)}&page=1`
     );
 
     setTimeout(() => setSearching(false), 300);
@@ -42,6 +36,10 @@ export default function Header() {
   const clearSearch = () => {
     setQuery("");
     navigate(`/?type=${activeType}&page=1`);
+  };
+
+  const toggleSidebar = () => {
+    window.dispatchEvent(new Event("toggleSidebar"));
   };
 
   const linkStyle = (type: string) => ({
@@ -53,26 +51,32 @@ export default function Header() {
   return (
     <header
       style={{
-        padding: "16px 24px",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 64,
+        zIndex: 1000,
+        background: "#111",
         display: "flex",
         alignItems: "center",
-        gap: 20,
-        borderBottom: "1px solid #222",
-        position: "sticky",
-        top: 0,
-        background: "#111",
-        zIndex: 100,
+        padding: "0 16px",
+        gap: 12,
       }}
     >
-      {/* BRAND */}
-      <Link
-        to="/?type=popular&page=1"
-        style={{ color: "white", textDecoration: "none" }}
+      {/* MOBILE MENU BUTTON */}
+      <button
+        onClick={toggleSidebar}
+        className="mobile-menu-btn"
       >
+        ☰
+      </button>
+
+      {/* BRAND */}
+      <Link to="/?type=popular&page=1" style={{ color: "white" }}>
         TMDb Explorer
       </Link>
 
-      {/* NAV */}
       <Link to="/?type=popular&page=1" style={linkStyle("popular")}>
         Popular
       </Link>
@@ -93,55 +97,33 @@ export default function Header() {
           display: "flex",
           alignItems: "center",
           gap: 8,
-          maxWidth: "100%",
-          flexWrap: "wrap",
-          justifyContent: "flex-end",
         }}
       >
-        <div style={{ position: "relative" }}>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search movies..."
-            style={{
-              padding: "8px 32px 8px 12px",
-              borderRadius: 6,
-              border: "1px solid #333",
-              background: "#1a1a1a",
-              color: "white",
-              width: "400px",
-              maxWidth: "100%",
-            }}
-          />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search movies..."
+          style={{
+            padding: "8px 12px",
+            borderRadius: 6,
+            border: "1px solid #333",
+            background: "#1a1a1a",
+            color: "white",
+            width: 260,
+          }}
+        />
 
-          {/* CLEAR BUTTON */}
-          {query.length > 0 && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              style={{
-                position: "absolute",
-                right: 8,
-                top: "50%",
-                transform: "translateY(-50%)",
-                border: "none",
-                background: "transparent",
-                color: "#aaa",
-                cursor: "pointer",
-                fontSize: 14,
-              }}
-            >
-              ✕
-            </button>
-          )}
-        </div>
-
-        {/* INLINE SEARCH FEEDBACK */}
-        {searching && (
-          <span style={{ fontSize: 12, color: "#888" }}>
-            searching...
-          </span>
+        {query && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            style={{ background: "transparent", color: "#aaa" }}
+          >
+            ✕
+          </button>
         )}
+
+        {searching && <span style={{ color: "#888" }}>...</span>}
       </form>
     </header>
   );

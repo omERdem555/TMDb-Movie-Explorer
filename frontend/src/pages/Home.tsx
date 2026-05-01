@@ -1,6 +1,10 @@
 import { useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 import MovieGrid from "../components/MovieGrid";
 import { useMovieQuery } from "../hooks/useMovieQuery";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -8,50 +12,76 @@ export default function Home() {
   const type = searchParams.get("type") || "popular";
   const search = searchParams.get("search") || "";
   const page = Number(searchParams.get("page") || 1);
+  const genres = searchParams.get("genres") || "";
 
-  const { data, loading, error } = useMovieQuery(type, search, page);
+  const { data, loading, error } = useMovieQuery(type, genres, search, page);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setSidebarOpen((prev) => !prev);
+    window.addEventListener("toggleSidebar", handler);
+    return () => window.removeEventListener("toggleSidebar", handler);
+  }, []);
 
   return (
-    <div className="container">
-      <h1>{type.toUpperCase()} Movies</h1>
+    <div className="app-layout">
+      <Header />
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <Sidebar
+        open={sidebarOpen}
+        selectedGenres={genres}
+        onChangeGenres={(newGenres) => {
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("genres", newGenres);
+            next.set("page", "1");
+            return next;
+          });
+        }}
+      />
 
-      {!loading && !error && data.length === 0 && (
-        <p>No movies found</p>
-      )}
+      {/* MAIN AREA */}
+      <main>
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <MovieGrid movies={data} loading={loading} />
+        {!loading && !error && data.length === 0 && (
+          <p>No movies found</p>
+        )}
 
-      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
-        <button
-          onClick={() =>
-            setSearchParams((prev) => {
-              const next = new URLSearchParams(prev);
-              next.set("page", String(Math.max(1, page - 1)));
-              return next;
-            })
-          }
-          disabled={page === 1}
-        >
-          Prev
-        </button>
+        <MovieGrid movies={data} loading={loading} />
 
-        <span>Page: {page}</span>
+        {/* 🔥 PAGINATION BURAYA GERİ GELİYOR */}
+        <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+          <button
+            onClick={() =>
+              setSearchParams((prev) => {
+                const next = new URLSearchParams(prev);
+                next.set("page", String(Math.max(1, page - 1)));
+                return next;
+              })
+            }
+            disabled={page === 1}
+          >
+            Prev
+          </button>
 
-        <button
-          onClick={() =>
-            setSearchParams((prev) => {
-              const next = new URLSearchParams(prev);
-              next.set("page", String(page + 1));
-              return next;
-            })
-          }
-        >
-          Next
-        </button>
-      </div>
+          <span>Page: {page}</span>
+
+          <button
+            onClick={() =>
+              setSearchParams((prev) => {
+                const next = new URLSearchParams(prev);
+                next.set("page", String(page + 1));
+                return next;
+              })
+            }
+          >
+            Next
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

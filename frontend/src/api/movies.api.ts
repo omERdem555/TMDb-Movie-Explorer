@@ -8,36 +8,35 @@ type ApiResponse<T> = {
   data: T;
 };
 
-// -----------------------------
-// INTERNAL BASE REQUEST WRAPPER
-// -----------------------------
-const request = async <T>(url: string, params?: any): Promise<T> => {
+// --------------------
+// REQUEST WRAPPER
+// --------------------
+const request = async <T>(
+  url: string,
+  params?: any
+): Promise<T> => {
   const res = await axios.get<ApiResponse<T>>(url, { params });
   return res.data.data;
 };
 
-// -----------------------------
-// EXPORTED API FUNCTIONS
-// -----------------------------
-
-export const fetchMovies = (type: string, page = 1) => {
-  return request<Movie[]>(`${API_BASE}/movies/discover`, { type, page });
-};
-
-export const searchMovies = (query: string, type: string, page = 1) => {
-  return request<Movie[]>(`${API_BASE}/movies/search`, {
-    query,
+// --------------------
+// SINGLE SOURCE API
+// --------------------
+export const fetchMovies = (
+  type: string,
+  page = 1,
+  genres?: string,
+  search?: string
+) => {
+  return request<Movie[]>(`${API_BASE}/movies`, {
     type,
     page,
+    genres,
+    search,
   });
 };
 
-export const fetchMovieDetail = async (id: string) => {
-  const res = await axios.get(`${API_BASE}/movies/${id}`);
-
-  // backend wrapper varsa:
-  if (res.data?.data) return res.data.data;
-
-  // TMDB raw response fallback
-  return res.data;
+// DETAIL (KULLANIYORSAN KALSIN)
+export const fetchMovieDetail = (id: string) => {
+  return request<Movie>(`${API_BASE}/movies/${id}`);
 };

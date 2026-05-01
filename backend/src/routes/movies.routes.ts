@@ -1,28 +1,12 @@
 import { Router } from "express";
-import {
-  discoverMovies,
-  getMovieDetail,
-  search,
-} from "../controllers/movies.controller";
+import { getMovies } from "../controllers/movies.controller";
 
 const router = Router();
 
 /**
- * DISCOVER
- * /api/movies/discover?type=popular
+ * UNIFIED MOVIES ENDPOINT
+ * /api/movies?type=popular&search=&genres=&page=1
  */
-router.get("/discover", discoverMovies);
-
-/**
- * SEARCH
- * /api/movies/search?query=batman
- */
-router.get("/search", search);
-
-/**
- * DETAIL
- * /api/movies/123
- */
-router.get("/:id", getMovieDetail);
+router.get("/", getMovies);
 
 export default router;

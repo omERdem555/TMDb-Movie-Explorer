@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchMovies, searchMovies } from "../api/movies.api";
+import { fetchMovies } from "../api/movies.api";
 import type { Movie } from "../types/movie.types";
 
 export const useMovieQuery = (
   type: string,
+  genres: string,
   search: string,
   page: number
 ) => {
@@ -17,22 +18,25 @@ export const useMovieQuery = (
         setLoading(true);
         setError(null);
 
-        const isSearch = search.trim().length > 0;
-
-        const result = isSearch
-          ? await searchMovies(search, type, page)
-          : await fetchMovies(type, page);
+        const result = await fetchMovies(
+          type,
+          page,
+          genres,
+          search
+        );
 
         setData(result);
-      } catch {
+      } catch (err) {
+        console.error(err);
         setError("Failed to load movies");
+        setData([]);
       } finally {
         setLoading(false);
       }
     };
 
     load();
-  }, [type, search, page]);
+  }, [type, genres, search, page]);
 
   return { data, loading, error };
 };
