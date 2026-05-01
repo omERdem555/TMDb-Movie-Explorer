@@ -29,7 +29,59 @@ body {
   padding: 0 16px;
 }
 
+.section {/* GLOBAL RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BASE TYPOGRAPHY */
+body {
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: white;
+}
+
+/* STANDARD SPACING SYSTEM */
+:root {
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.15);
+}
+
+/* LAYOUT */
+.container {
+  width: 1120px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
 .section {
+  padding: 24px 0;
+}
+
+/* INPUT */
+input {
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  transition: all 0.2s ease;
+}
   padding: 24px 0;
 }
 

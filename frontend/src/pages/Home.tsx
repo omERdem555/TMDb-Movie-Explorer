@@ -24,11 +24,17 @@ export default function Home() {
         setLoading(true);
         setError(null);
 
-        const res = await axios.get(`${API_BASE}/movies/discover`, {
-          params: { type, page },
-        });
+        const allMovies: Movie[] = [];
 
-        let movies: Movie[] = res.data.data;
+        for (let i = 1; i <= 5; i++) {
+          const res = await axios.get(`${API_BASE}/movies/discover`, {
+            params: { type, page: i },
+          });
+
+          allMovies.push(...res.data.data);
+        }
+
+        let movies = allMovies;
 
         // search filter (type korunur)
         if (search.trim().length > 0) {
@@ -40,7 +46,10 @@ export default function Home() {
         }
 
         // 🔥 18 film limit
-        movies = movies.slice(0, 18);
+        const start = (page - 1) * 18;
+        const end = start + 18;
+
+        movies = movies.slice(start, end);
 
         setData(movies);
       } catch (err) {
@@ -53,14 +62,6 @@ export default function Home() {
     load();
   }, [type, search, page]);
 
-  // 🔥 RESET PAGE ON TYPE/SEARCH CHANGE
-  useEffect(() => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set("page", "1");
-      return next;
-    });
-  }, [type, search]);
 
   // 🧨 ERROR STATE
   if (error) {
@@ -91,13 +92,18 @@ export default function Home() {
       {/* PAGINATION */}
       <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
         <button
-          onClick={() =>
-            setSearchParams((prev) => {
-              const next = new URLSearchParams(prev);
-              next.set("page", String(Math.max(1, page - 1)));
-              return next;
-            })
-          }
+          onClick={() => {
+            const next = new URLSearchParams();
+
+            next.set("type", type);
+            next.set("page", String(Math.max(1, page - 1)));
+
+            if (search.trim()) {
+              next.set("search", search);
+            }
+
+            setSearchParams(next);
+          }}
           disabled={page === 1}
         >
           Prev
@@ -106,13 +112,18 @@ export default function Home() {
         <span>Page: {page}</span>
 
         <button
-          onClick={() =>
-            setSearchParams((prev) => {
-              const next = new URLSearchParams(prev);
-              next.set("page", String(page + 1));
-              return next;
-            })
+        onClick={() => {
+          const next = new URLSearchParams();
+
+          next.set("type", type);
+          next.set("page", String(page + 1));
+
+          if (search.trim()) {
+            next.set("search", search);
           }
+
+          setSearchParams(next);
+        }}
         >
           Next
         </button>

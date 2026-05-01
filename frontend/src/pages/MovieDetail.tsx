@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { fetchMovieDetail } from "../api/movies.api";
 
 type MovieDetailData = {
@@ -15,6 +15,13 @@ type MovieDetailData = {
 
 export default function MovieDetail() {
   const { id } = useParams();
+const location = useLocation();
+
+const params = new URLSearchParams(location.search);
+
+const backLink = decodeURIComponent(
+  params.get("from") || "/?type=popular&page=1"
+);
 
   const [movie, setMovie] = useState<MovieDetailData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,8 +65,16 @@ export default function MovieDetail() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-      <Link to="/" style={{ display: "inline-block", marginBottom: "20px" }}>
-        ← Back to Home
+      <Link
+        to={backLink}
+        style={{
+          display: "inline-block",
+          marginBottom: "20px",
+          color: "black",
+          textDecoration: "none",
+        }}
+      >
+        ← Back
       </Link>
 
       <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>

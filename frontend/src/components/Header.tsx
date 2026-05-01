@@ -9,54 +9,79 @@ export default function Header() {
   const urlSearch = searchParams.get("search") || "";
 
   const [query, setQuery] = useState(urlSearch);
-  const [isTyping, setIsTyping] = useState(false);
+  const [searching, setSearching] = useState(false);
 
-  // URL değişirse input sync
+  // URL → input sync
   useEffect(() => {
     setQuery(urlSearch);
   }, [urlSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
 
-    navigate(`/?type=${activeType}&search=${encodeURIComponent(query)}`);
-    setIsTyping(false);
+    setSearching(true);
+
+    // boşsa search temizlenir ama type korunur
+    if (!query.trim()) {
+      navigate(`/?type=${activeType}&page=1`);
+      setTimeout(() => setSearching(false), 300);
+      return;
+    }
+
+    // 🔥 KRİTİK FIX:
+    // type + search + page birlikte korunur
+    navigate(
+      `/?type=${activeType}&search=${encodeURIComponent(
+        query
+      )}&page=1`
+    );
+
+    setTimeout(() => setSearching(false), 300);
   };
 
   const clearSearch = () => {
     setQuery("");
-    navigate(`/?type=${activeType}`);
+    navigate(`/?type=${activeType}&page=1`);
   };
 
   const linkStyle = (type: string) => ({
     fontWeight: activeType === type ? "bold" : "normal",
     textDecoration: activeType === type ? "underline" : "none",
+    color: "white",
   });
 
   return (
     <header
       style={{
-        padding: "12px 16px",
+        padding: "16px 24px",
         display: "flex",
         alignItems: "center",
-        gap: 16,
+        gap: 20,
         borderBottom: "1px solid #222",
+        position: "sticky",
+        top: 0,
+        background: "#111",
+        zIndex: 100,
       }}
     >
       {/* BRAND */}
-      <Link to="/?type=popular">TMDb Explorer</Link>
+      <Link
+        to="/?type=popular&page=1"
+        style={{ color: "white", textDecoration: "none" }}
+      >
+        TMDb Explorer
+      </Link>
 
       {/* NAV */}
-      <Link to="/?type=popular" style={linkStyle("popular")}>
+      <Link to="/?type=popular&page=1" style={linkStyle("popular")}>
         Popular
       </Link>
 
-      <Link to="/?type=top_rated" style={linkStyle("top_rated")}>
+      <Link to="/?type=top_rated&page=1" style={linkStyle("top_rated")}>
         Top Rated
       </Link>
 
-      <Link to="/?type=upcoming" style={linkStyle("upcoming")}>
+      <Link to="/?type=upcoming&page=1" style={linkStyle("upcoming")}>
         Upcoming
       </Link>
 
@@ -68,41 +93,48 @@ export default function Header() {
           display: "flex",
           alignItems: "center",
           gap: 8,
-          position: "relative",
         }}
       >
-      <div style={{ position: "relative" }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search movies..."
-          style={{
-            paddingRight: 30,
-            outline: "none",
-          }}
-        />
-
-        {query.length > 0 && (
-          <button
-            onClick={() => setQuery("")}
+        <div style={{ position: "relative" }}>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search movies..."
             style={{
-              position: "absolute",
-              right: 5,
-              top: 2,
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
+              padding: "8px 32px 8px 12px",
+              borderRadius: 6,
+              border: "1px solid #333",
+              background: "#1a1a1a",
+              color: "white",
             }}
-          >
-            ✕
-          </button>
-        )}
-      </div>
+          />
 
-        {/* INLINE LOADING FEEDBACK */}
-        {isTyping && (
+          {/* CLEAR BUTTON */}
+          {query.length > 0 && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              style={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                border: "none",
+                background: "transparent",
+                color: "#aaa",
+                cursor: "pointer",
+                fontSize: 14,
+              }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* INLINE SEARCH FEEDBACK */}
+        {searching && (
           <span style={{ fontSize: 12, color: "#888" }}>
-            typing...
+            searching...
           </span>
         )}
       </form>

@@ -1,5 +1,5 @@
 import type { Movie } from "../types/movie.types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type Props = {
   movie: Movie;
@@ -7,10 +7,17 @@ type Props = {
 
 export default function MovieCard({ movie }: Props) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div
-      onClick={() => navigate(`/movie/${movie.id}`)}
+      onClick={() =>
+        navigate(
+          `/movie/${movie.id}?from=${encodeURIComponent(
+            location.pathname + location.search
+          )}`
+        )
+      }
       style={{
         cursor: "pointer",
         borderRadius: 10,
