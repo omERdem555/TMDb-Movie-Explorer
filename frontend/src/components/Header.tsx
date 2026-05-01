@@ -93,6 +93,9 @@ export default function Header() {
           display: "flex",
           alignItems: "center",
           gap: 8,
+          maxWidth: "100%",
+          flexWrap: "wrap",
+          justifyContent: "flex-end",
         }}
       >
         <div style={{ position: "relative" }}>
@@ -106,6 +109,8 @@ export default function Header() {
               border: "1px solid #333",
               background: "#1a1a1a",
               color: "white",
+              width: "220px",
+              maxWidth: "100%",
             }}
           />
 

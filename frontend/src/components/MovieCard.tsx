@@ -19,10 +19,14 @@ export default function MovieCard({ movie }: Props) {
         )
       }
       style={{
+        width: "100%",          // 🔥 GRID FIX
+        height: "100%",        // 🔥 GRID FIX
         cursor: "pointer",
         borderRadius: 10,
         overflow: "hidden",
         background: "#1a1a1a",
+        display: "flex",
+        flexDirection: "column",
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
       }}
       onMouseEnter={(e) => {
@@ -71,7 +75,7 @@ export default function MovieCard({ movie }: Props) {
           </div>
         )}
 
-        {/* ⭐ RATING BADGE (FAZ 9.3 UYUMLU) */}
+        {/* ⭐ RATING BADGE */}
         <div
           style={{
             position: "absolute",

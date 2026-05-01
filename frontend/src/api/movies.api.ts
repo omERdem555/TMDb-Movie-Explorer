@@ -32,6 +32,12 @@ export const searchMovies = (query: string, type: string, page = 1) => {
   });
 };
 
-export const fetchMovieDetail = (id: string) => {
-  return request<any>(`${API_BASE}/movies/${id}`);
+export const fetchMovieDetail = async (id: string) => {
+  const res = await axios.get(`${API_BASE}/movies/${id}`);
+
+  // backend wrapper varsa:
+  if (res.data?.data) return res.data.data;
+
+  // TMDB raw response fallback
+  return res.data;
 };

@@ -40,7 +40,10 @@ const backLink = decodeURIComponent(
 
         const res = await fetchMovieDetail(id);
 
-        setMovie(res.data);
+        // 🔥 DEBUG BURADA
+        console.log("MOVIE DETAIL RAW:", res);
+
+        setMovie(res);
       } catch (err) {
         setError("Failed to load movie detail");
       } finally {
