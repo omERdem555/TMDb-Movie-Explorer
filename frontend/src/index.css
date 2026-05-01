@@ -112,6 +112,15 @@ main {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
 /* =========================
    TABLET
 ========================= */
@@ -131,6 +140,8 @@ main {
   .sidebar {
     width: 200px;
   }
+
+
 }
 
 /* =========================
