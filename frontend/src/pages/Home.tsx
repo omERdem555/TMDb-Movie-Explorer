@@ -1,6 +1,9 @@
 import { useSearchParams } from "react-router-dom";
 import MovieGrid from "../components/MovieGrid";
 import { useMovies } from "../hooks/useMovies";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+import EmptyState from "../components/ui/EmptyState";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -8,7 +11,6 @@ export default function Home() {
   const type = searchParams.get("type") || "popular";
   const search = searchParams.get("search") || "";
   const page = Number(searchParams.get("page") || 1);
-
   const { data, loading, error } = useMovies(type, search, page);
 
   return (
@@ -16,15 +18,13 @@ export default function Home() {
       <h1>{type.toUpperCase()} Movies</h1>
 
       {/* LOADING */}
-      {loading && <p>Loading...</p>}
+      {loading && <LoadingState />}
 
       {/* ERROR */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <ErrorState message={error} />}
 
       {/* EMPTY */}
-      {!loading && !error && data.length === 0 && (
-        <p>No movies found</p>
-      )}
+      {!loading && !error && data.length === 0 && <EmptyState />}
 
       {/* GRID */}
       <MovieGrid movies={data} loading={loading} />
