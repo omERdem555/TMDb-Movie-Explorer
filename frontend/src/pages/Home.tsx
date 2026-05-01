@@ -9,8 +9,6 @@ export default function Home() {
   const search = searchParams.get("search") || "";
   const page = Number(searchParams.get("page") || 1);
 
-  
-
   const { data, loading, error } = useMovies(type, search, page);
 
   return (
@@ -45,8 +43,6 @@ export default function Home() {
         >
           Prev
         </button>
-
-        
 
         <span>Page: {page}</span>
 

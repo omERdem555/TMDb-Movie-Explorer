@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchMovies, searchMovies } from "../api/movies.api";
 import type { Movie } from "../types/movie.types";
+import { fetchMovies } from "../api/movies.api";
 
 type UseMoviesResult = {
   data: Movie[];
@@ -23,18 +23,32 @@ export const useMovies = (
         setLoading(true);
         setError(null);
 
-        const isSearch = search.trim().length > 0;
+        const allMovies: Movie[] = [];
 
-        let result: Movie[];
-
-        if (isSearch) {
-          result = await searchMovies(search, type, page);
-        } else {
-          result = await fetchMovies(type, page);
+        // İlk 5 sayfa preload
+        for (let i = 1; i <= 5; i++) {
+          const movies = await fetchMovies(type, i);
+          allMovies.push(...movies);
         }
 
-        setData(result);
-      } catch (e) {
+        let filteredMovies = allMovies;
+
+        // SEARCH FILTER
+        if (search.trim()) {
+          const q = search.toLowerCase();
+
+          filteredMovies = filteredMovies.filter((movie) =>
+            movie.title.toLowerCase().includes(q)
+          );
+        }
+
+        // PAGINATION (20 item standard)
+        const itemsPerPage = 20;
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        setData(filteredMovies.slice(start, end));
+      } catch (err) {
         setError("Failed to load movies");
       } finally {
         setLoading(false);

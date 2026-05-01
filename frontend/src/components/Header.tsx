@@ -109,7 +109,7 @@ export default function Header() {
               border: "1px solid #333",
               background: "#1a1a1a",
               color: "white",
-              width: "220px",
+              width: "400px",
               maxWidth: "100%",
             }}
           />

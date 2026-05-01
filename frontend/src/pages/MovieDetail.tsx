@@ -73,7 +73,7 @@ const backLink = decodeURIComponent(
         style={{
           display: "inline-block",
           marginBottom: "20px",
-          color: "black",
+          color: "#bebebe",
           textDecoration: "none",
         }}
       >
