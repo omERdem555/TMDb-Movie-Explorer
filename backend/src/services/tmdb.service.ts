@@ -72,3 +72,9 @@ export const getMoviesByType = async (type: string, page: number = 1) => {
 
   return res.data;
 };
+
+
+export const getMovieCredits = async (id: string) => {
+  const res = await tmdbClient.get(`/movie/${id}/credits`);
+  return res.data;
+};

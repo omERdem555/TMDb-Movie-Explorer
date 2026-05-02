@@ -11,6 +11,14 @@ type MovieDetailData = {
   releaseDate: string;
   rating: number;
   posterUrl: string | null;
+
+  // NEW
+  cast?: {
+    id: number;
+    name: string;
+    character: string;
+    profileUrl: string | null;
+  }[];
 };
 
 export default function MovieDetail() {
@@ -127,6 +135,51 @@ const backLink = decodeURIComponent(
 
           <p>
             <strong>Overview:</strong> {movie.overview}
+              {movie.cast && movie.cast.length > 0 && (
+                <div style={{ marginTop: 30 }}>
+                  <h3>Featured Cast</h3>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 16,
+                      overflowX: "auto",
+                      paddingTop: 10,
+                    }}
+                  >
+                    {movie.cast.map((actor) => (
+                      <div
+                        key={actor.id}
+                        style={{
+                          minWidth: 100,
+                          textAlign: "center",
+                        }}
+                      >
+                        <img
+                          src={
+                            actor.profileUrl ||
+                            "https://via.placeholder.com/80x80?text=No+Image"
+                          }
+                          style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+
+                        <div style={{ fontSize: 12, marginTop: 6 }}>
+                          {actor.name}
+                        </div>
+
+                        <div style={{ fontSize: 10, color: "#aaa" }}>
+                          {actor.character}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </p>
         </div>
       </div>

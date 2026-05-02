@@ -8,20 +8,12 @@ type ApiResponse<T> = {
   data: T;
 };
 
-// --------------------
-// REQUEST WRAPPER
-// --------------------
-const request = async <T>(
-  url: string,
-  params?: any
-): Promise<T> => {
+const request = async <T>(url: string, params?: any): Promise<T> => {
   const res = await axios.get<ApiResponse<T>>(url, { params });
   return res.data.data;
 };
 
-// --------------------
-// SINGLE SOURCE API
-// --------------------
+// DISCOVER
 export const fetchMovies = (
   type: string,
   page = 1,
@@ -36,7 +28,26 @@ export const fetchMovies = (
   });
 };
 
-// DETAIL (KULLANIYORSAN KALSIN)
-export const fetchMovieDetail = (id: string) => {
-  return request<Movie>(`${API_BASE}/movies/${id}`);
+// SEARCH
+export const searchMovies = (
+  query: string,
+  page = 1,
+  type: string
+) => {
+  return request<Movie[]>(`${API_BASE}/movies/search`, {
+    query,
+    page,
+    type,
+  });
+};
+
+// DETAIL
+export const fetchMovieDetail = async (id: string) => {
+  const res = await axios.get(`${API_BASE}/movies/${id}`);
+
+  if (res.data?.data) {
+    return res.data.data;
+  }
+
+  return res.data;
 };

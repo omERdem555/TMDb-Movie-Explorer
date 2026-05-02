@@ -3,6 +3,8 @@ import {
   getPopularMovies,
   getTopRatedMovies,
   getUpcomingMovies,
+  getMovieById,
+  getMovieCredits,
   searchMovies,
 } from "../services/tmdb.service";
 
@@ -138,3 +140,57 @@ export const getMovies = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getMovieDetail = async (req: Request, res: Response) => {
+  try {
+    const idParam = req.params.id;
+    // FIX: güvenli normalize
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
+    const credits = await getMovieCredits(id);
+    
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({
+        success: false,
+        error: "INVALID_ID",
+      });
+    }
+
+    const data = await getMovieById(id);
+
+    return res.json({
+      success: true,
+      data: {
+        id: data.id,
+        title: data.title,
+        overview: data.overview,
+        genres: data.genres,
+        runtime: data.runtime,
+        releaseDate: data.release_date,
+        rating: Number(data.vote_average.toFixed(1)),
+        posterUrl: data.poster_path
+          ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
+          : null,
+
+        // 🔥 NEW
+        cast: credits.cast
+          ?.slice(0, 10)
+          .map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            character: c.character,
+            profileUrl: c.profile_path
+              ? `https://image.tmdb.org/t/p/w185${c.profile_path}`
+              : null,
+          })),
+      },
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      error: "DETAIL_FETCH_ERROR",
+    });
+  }
+};  

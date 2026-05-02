@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { getMovies } from "../controllers/movies.controller";
+import {
+  getMovies,
+  getMovieDetail,
+} from "../controllers/movies.controller";
 
 const router = Router();
 
@@ -8,5 +11,6 @@ const router = Router();
  * /api/movies?type=popular&search=&genres=&page=1
  */
 router.get("/", getMovies);
+router.get("/:id", getMovieDetail);
 
 export default router;
