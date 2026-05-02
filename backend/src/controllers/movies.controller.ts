@@ -143,11 +143,9 @@ export const getMovies = async (req: Request, res: Response) => {
 
 export const getMovieDetail = async (req: Request, res: Response) => {
   try {
-    const idParam = req.params.id;
-    // FIX: güvenli normalize
-    const id = Array.isArray(idParam) ? idParam[0] : idParam;
-    const credits = await getMovieCredits(id);
-    
+    const rawId = req.params.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
+
     if (!id || isNaN(Number(id))) {
       return res.status(400).json({
         success: false,
@@ -155,36 +153,36 @@ export const getMovieDetail = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await getMovieById(id);
+    const [movie, credits] = await Promise.all([
+      getMovieById(id),
+      getMovieCredits(id),
+    ]);
 
     return res.json({
       success: true,
       data: {
-        id: data.id,
-        title: data.title,
-        overview: data.overview,
-        genres: data.genres,
-        runtime: data.runtime,
-        releaseDate: data.release_date,
-        rating: Number(data.vote_average.toFixed(1)),
-        posterUrl: data.poster_path
-          ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        genres: movie.genres,
+        runtime: movie.runtime,
+        releaseDate: movie.release_date,
+        rating: Number(movie.vote_average.toFixed(1)),
+        posterUrl: movie.poster_path
+          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
           : null,
 
-        // 🔥 NEW
-        cast: credits.cast
-          ?.slice(0, 10)
-          .map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            character: c.character,
-            profileUrl: c.profile_path
-              ? `https://image.tmdb.org/t/p/w185${c.profile_path}`
-              : null,
-          })),
+        // 🔥 CAST EKLENDİ
+        cast: credits.cast.slice(0, 12).map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          character: c.character,
+          profilePath: c.profile_path
+            ? `https://image.tmdb.org/t/p/w185${c.profile_path}`
+            : null,
+        })),
       },
     });
-
   } catch (err) {
     console.log(err);
 
@@ -193,4 +191,4 @@ export const getMovieDetail = async (req: Request, res: Response) => {
       error: "DETAIL_FETCH_ERROR",
     });
   }
-};  
+};
