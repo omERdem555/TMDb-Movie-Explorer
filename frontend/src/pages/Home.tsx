@@ -7,6 +7,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
 import EmptyState from "../components/EmptyState";
+import ErrorState from "../components/ErrorState";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,7 +46,12 @@ export default function Home() {
 
       {/* MAIN AREA */}
       <main>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <ErrorState
+            message={error}
+            onRetry={() => window.location.reload()}
+          />
+        )}
 
         {/* EMPTY STATE */}
         {!loading && !error && data.length === 0 && (
