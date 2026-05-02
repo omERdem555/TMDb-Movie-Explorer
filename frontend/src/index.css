@@ -253,6 +253,8 @@ main {
   /* hamburger only mobile */
   .mobile-menu-btn {
     display: block;
+    flex-shrink: 0;
+
   }
 
   /* grid mobile */
@@ -260,11 +262,28 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 
+
+  /*header*/
+  header {
+    flex-wrap: wrap;
+    min-height: fit-content;
+  }
+  header form {
+    order: 999;
+    width: 100%;
+    margin-left: 0;
+    display: flex;
+    min-height: 200;
+  }
   header input {
-    width: 180px;
+    width: 100%;
+    max-width: none;
+  }
+  header a{
+    flex-shrink: 0;
   }
 
-    .movie-detail-page {
+  .movie-detail-page {
     padding: 16px;
   }
 
