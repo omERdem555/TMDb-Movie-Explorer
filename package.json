@@ -1,7 +1,7 @@
 {
-  "name": "tmdb-movie-explorer",
+  "name": "cine-scope",
   "version": "1.0.0",
-  "description": "TMDb Movie Explorer - Full Stack Application",
+  "description": "CineScop - Full Stack Application",
   "private": true,
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
