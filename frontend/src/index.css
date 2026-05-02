@@ -166,8 +166,8 @@ header input {
 }
 
 .genre-item input[type="checkbox"]:checked {
-  background: #e50914;
-  border-color: #e50914;
+  background: #c0c0c0;
+  border-color: #000000;
 }
 
 .genre-item input[type="checkbox"]:checked::after {
@@ -178,7 +178,7 @@ header input {
 
   font-size: 12px;
   font-weight: bold;
-  color: white;
+  color: rgb(110, 110, 110);
 }
 
 /* GENRE LABEL */
@@ -253,6 +253,21 @@ main {
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 500;
+}
+
+.watchlist-btn {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: #2e2e2e;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.watchlist-btn:hover {
+  background: #2e2e2e;
 }
 
 /* =========================

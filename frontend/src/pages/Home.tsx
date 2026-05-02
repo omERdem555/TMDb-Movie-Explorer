@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
 import EmptyState from "../components/EmptyState";
 import ErrorState from "../components/ErrorState";
+import { getWatchlist } from "../utils/watchlist";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,8 +19,15 @@ export default function Home() {
   const genres = searchParams.get("genres") || "";
 
   const { data, loading, error } = useMovieQuery(type, genres, search, page);
+  let filteredData = data;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const watchlistOnly = searchParams.get("watchlist") === "true";
+
+  if (watchlistOnly) {
+    const watchlistIds = new Set(getWatchlist().map((m) => m.id));
+    filteredData = data.filter((movie) => watchlistIds.has(movie.id));
+  }
 
   useEffect(() => {
     const handler = () => setSidebarOpen((prev) => !prev);
@@ -34,6 +42,22 @@ export default function Home() {
       <Sidebar
         open={sidebarOpen}
         selectedGenres={genres}
+        watchlistOnly={watchlistOnly}
+        onToggleWatchlistOnly={() => {
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+
+            if (watchlistOnly) {
+              next.delete("watchlist");
+            } else {
+              next.set("watchlist", "true");
+            }
+
+            next.set("page", "1");
+
+            return next;
+          });
+        }}
         onChangeGenres={(newGenres) => {
           setSearchParams((prev) => {
             const next = new URLSearchParams(prev);
@@ -54,7 +78,7 @@ export default function Home() {
         )}
 
         {/* EMPTY STATE */}
-        {!loading && !error && data.length === 0 && (
+        {!loading && !error && filteredData.length === 0 && (
           <EmptyState
             type={type}
             search={search}
@@ -70,7 +94,7 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <MovieGrid movies={data} loading={loading} />
+          <MovieGrid movies={filteredData} loading={loading} />
         )}
 
         {/* PAGINATION */}

@@ -1,5 +1,6 @@
 import type { Movie } from "../types/movie.types";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toggleWatchlist, isInWatchlist } from "../utils/watchlist";
 
 type Props = {
   movie: Movie;
@@ -8,7 +9,18 @@ type Props = {
 export default function MovieCard({ movie }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const saved = isInWatchlist(movie.id);
+const handleWatchlist = (e: React.MouseEvent) => {
+  e.stopPropagation();
 
+  toggleWatchlist({
+    id: movie.id,
+    title: movie.title,
+    posterUrl: movie.posterUrl,
+  });
+
+  window.location.reload();
+};
   return (
     <div
       onClick={() =>
@@ -38,6 +50,9 @@ export default function MovieCard({ movie }: Props) {
         e.currentTarget.style.boxShadow = "none";
       }}
     >
+
+
+
       {/* POSTER */}
       <div
         style={{
@@ -74,6 +89,9 @@ export default function MovieCard({ movie }: Props) {
             No Image
           </div>
         )}
+        
+
+
 
         {/* ⭐ RATING BADGE */}
         <div
@@ -95,6 +113,9 @@ export default function MovieCard({ movie }: Props) {
           ⭐ {movie.rating}
         </div>
       </div>
+
+
+
 
       {/* CONTENT */}
       <div style={{ padding: 10 }}>
@@ -119,6 +140,9 @@ export default function MovieCard({ movie }: Props) {
             ? movie.overview.slice(0, 80) + "..."
             : movie.overview}
         </p>
+          <button onClick={handleWatchlist} className="watchlist-btn">
+            {saved ? "✓ Saved" : "+ Watchlist"}
+          </button>
       </div>
     </div>
   );
