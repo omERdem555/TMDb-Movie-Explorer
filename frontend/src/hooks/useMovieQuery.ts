@@ -25,7 +25,7 @@ export const useMovieQuery = (
           search
         );
 
-        setData(result);
+        setData(Array.isArray(result) ? result : []);
       } catch (err) {
         console.error(err);
         setError("Failed to load movies");

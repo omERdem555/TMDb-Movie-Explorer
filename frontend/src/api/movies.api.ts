@@ -4,23 +4,16 @@ import type { Movie} from "../types/movie.types";
 // Use environment variable or default to /api for Vercel
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
-type ApiResponse<T> = {
-  success: boolean;
-  data: T;
-};
 
 
 const request = async <T>(url: string, params?: any): Promise<T> => {
-  try {
-    const res = await axios.get<ApiResponse<T>>(url, { params });
-    if (!res.data || !res.data.data) {
-      throw new Error("Invalid API response structure");
-    }
-    return res.data.data;
-  } catch (error) {
-    console.error(`API Error: ${url}`, error);
-    throw error;
+  const res = await axios.get(url, { params });
+
+  if (!res.data?.success) {
+    throw new Error("API Error");
   }
+
+  return res.data.data ?? [];
 };
 
 // DISCOVER
