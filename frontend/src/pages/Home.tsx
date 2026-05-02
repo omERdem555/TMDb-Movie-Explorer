@@ -6,6 +6,7 @@ import { useMovieQuery } from "../hooks/useMovieQuery";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
+import EmptyState from "../components/EmptyState";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -48,7 +49,11 @@ export default function Home() {
 
         {/* EMPTY STATE */}
         {!loading && !error && data.length === 0 && (
-          <p>No movies found</p>
+          <EmptyState
+            type={type}
+            search={search}
+            genres={genres}
+          />
         )}
 
         {/* LOADING STATE → SKELETON */}
