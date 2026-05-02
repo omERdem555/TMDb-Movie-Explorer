@@ -1,6 +1,6 @@
 {
-  "installCommand": "npm install && cd frontend && npm install",
-  "buildCommand": "npm run build:frontend",
+  "version": 2,
+  "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
@@ -8,12 +8,12 @@
       "destination": "/api/movies/:path*"
     },
     {
-      "source": "/api/movies",
-      "destination": "/api/movies"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     },
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/index.html"
     }
   ]
 }

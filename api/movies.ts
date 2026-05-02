@@ -37,10 +37,6 @@ export default async function handler(
   }
 
   try {
-    return res.json({
-  success: true,
-  env: process.env.TMDB_API_KEY || "NOT_FOUND",
-});
     // Validate API Key
     if (!process.env.TMDB_API_KEY) {
       console.error("CRITICAL: TMDB_API_KEY is not set!");
