@@ -2,9 +2,18 @@
   "installCommand": "npm install && cd frontend && npm install",
   "buildCommand": "npm run build:frontend",
   "outputDirectory": "frontend/dist",
-  "framework": "vite",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/movies/:path*",
+      "destination": "/api/movies/:path*"
+    },
+    {
+      "source": "/api/movies",
+      "destination": "/api/movies"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }
