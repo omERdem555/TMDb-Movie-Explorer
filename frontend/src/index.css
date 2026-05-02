@@ -91,6 +91,8 @@ header input {
   top: 64px;
   height: calc(100vh - 64px);
   overflow-y: auto;
+  padding-left: 20px;
+  padding-top: 20px;
 }
 
 /* =========================
@@ -278,7 +280,7 @@ main {
   /* sidebar drawer */
   .sidebar {
     position: fixed;
-    top: 75px;
+    top: 85px;
     left: 0;
     height: calc(100vh - 20px);
     width: 170px;
@@ -311,6 +313,7 @@ main {
     min-height: fit-content;
   }
   header form {
+    padding-bottom: 10px;
     order: 999;
     width: 100%;
     margin-left: 0;
