@@ -30,6 +30,7 @@ export default async function handler(
   // Debug logging
   console.log("API Key available:", !!process.env.TMDB_API_KEY);
   console.log("Request params:", req.query);
+  console.log("ENV CHECK:", process.env.TMDB_API_KEY);
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
