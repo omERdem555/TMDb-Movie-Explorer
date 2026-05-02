@@ -229,6 +229,32 @@ main {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.movie-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+  position: relative;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* rating badge */
+.rating-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(243, 156, 18, 0.9);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
 /* =========================
    MOBILE MENU BUTTON
 ========================= */
@@ -359,10 +385,6 @@ main {
   object-fit: cover;
 }
 
-.cast-name {
-  font-size: 12px;
-  margin-top: 6px;
-}
 
 .cast-char {
   font-size: 10px;
@@ -622,6 +644,7 @@ footer {
 .cast-card {
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 
 /* FIXED POSTER FRAME */
@@ -648,16 +671,17 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+
+  color: #777;
   font-size: 12px;
+
   background: #1a1a1a;
 }
-
 /* TEXT ALT BLOK */
 .cast-name {
   font-size: 12px;
-  margin-top: 6px;
-  color: white;
+  margin-top: 0;
+  line-height: 1.2;
 }
 
 .cast-char {

@@ -101,7 +101,7 @@ const location = useLocation();
 
       <div className="cast-grid">
         {movie.cast?.map((c: any) => (
-          <div className="cast-card" key={c.id}>
+          <div className="cast-card" key={c.id} style={{ minHeight: "220px" }}>
             
             {/* IMAGE WRAPPER - SABİT ALAN */}
             <div className="cast-image">
