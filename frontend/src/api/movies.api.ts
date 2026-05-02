@@ -9,6 +9,7 @@ type ApiResponse<T> = {
   data: T;
 };
 
+
 const request = async <T>(url: string, params?: any): Promise<T> => {
   try {
     const res = await axios.get<ApiResponse<T>>(url, { params });

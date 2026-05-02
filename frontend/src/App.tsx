@@ -13,7 +13,7 @@ export default function App() {
         <Route path="/movie/:id" element={<MovieDetail />} />
       </Routes>
         <footer>
-          FrameFlow © {new Date().getFullYear()} | Built with React + TMDb API
+          CineScope © {new Date().getFullYear()} | Built with React + TMDb API
         </footer>
     </BrowserRouter>
   );
