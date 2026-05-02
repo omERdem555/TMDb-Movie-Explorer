@@ -27,12 +27,26 @@ export default async function handler(
     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
   );
 
+  // Debug logging
+  console.log("API Key available:", !!process.env.TMDB_API_KEY);
+  console.log("Request params:", req.query);
+
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
   try {
+    // Validate API Key
+    if (!process.env.TMDB_API_KEY) {
+      console.error("CRITICAL: TMDB_API_KEY is not set!");
+      return res.status(500).json({
+        success: false,
+        error: "API_KEY_MISSING",
+        message: "TMDB_API_KEY environment variable is not configured",
+      });
+    }
+
     const type = String(req.query.type || "popular");
     const search = String(req.query.search || "").trim().toLowerCase();
     const genres = String(req.query.genres || "");
@@ -189,12 +203,18 @@ export default async function handler(
       totalPages: data.total_pages,
       data: results.map(mapMovie),
     });
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error("FETCH_ERROR:", err?.message || err);
+    console.error("Error details:", {
+      code: err?.code,
+      response: err?.response?.status,
+      data: err?.response?.data,
+    });
 
     res.status(500).json({
       success: false,
       error: "FETCH_ERROR",
+      details: err?.message || "Unknown error",
     });
   }
 }

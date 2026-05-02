@@ -22,12 +22,26 @@ export default async function handler(
     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
   );
 
+  // Debug logging
+  console.log("API Key available:", !!process.env.TMDB_API_KEY);
+  console.log("Request ID:", id);
+
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
   try {
+    // Validate API Key
+    if (!process.env.TMDB_API_KEY) {
+      console.error("CRITICAL: TMDB_API_KEY is not set!");
+      return res.status(500).json({
+        success: false,
+        error: "API_KEY_MISSING",
+        message: "TMDB_API_KEY environment variable is not configured",
+      });
+    }
+
     const { id } = req.query;
 
     if (!id || Array.isArray(id) || isNaN(Number(id))) {
@@ -68,12 +82,18 @@ export default async function handler(
         similarMovies: similar.results.slice(0, 8).map(mapMovie),
       },
     });
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error("DETAIL_FETCH_ERROR:", err?.message || err);
+    console.error("Error details:", {
+      code: err?.code,
+      response: err?.response?.status,
+      data: err?.response?.data,
+    });
 
     return res.status(500).json({
       success: false,
       error: "DETAIL_FETCH_ERROR",
+      details: err?.message || "Unknown error",
     });
   }
 }
