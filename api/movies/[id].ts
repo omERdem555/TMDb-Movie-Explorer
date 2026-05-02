@@ -3,8 +3,8 @@ import {
   getMovieById,
   getMovieCredits,
   getSimilarMovies,
-} from "../../services/tmdb.service";
-import { mapMovie } from "../../utils/mapper";
+} from "../services/tmdb.service";
+import { mapMovie } from "../utils/mapper";
 
 export default async function handler(
   req: VercelRequest,
