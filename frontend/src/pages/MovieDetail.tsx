@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { fetchMovieDetail } from "../api/movies.api";
+import CastSkeleton from "../components/skeleton/CastSkeleton";
 
 type MovieDetailData = {
   id: number;
@@ -100,11 +101,24 @@ const location = useLocation();
       <h2 className="cast-title">Cast</h2>
 
       <div className="cast-grid">
-        {movie.cast.map((actor) => (
-          <div key={actor.id} className="cast-card">
-            <img src={actor.profilePath || "https://via.placeholder.com/300x450"} />
-            <div className="cast-name">{actor.name}</div>
-            <div className="cast-char">{actor.character}</div>
+        {movie.cast?.map((c: any) => (
+          <div className="cast-card" key={c.id}>
+            
+            {/* IMAGE WRAPPER - SABİT ALAN */}
+            <div className="cast-image">
+              {c.profilePath ? (
+                <img src={c.profilePath} alt={c.name} />
+              ) : (
+                <div className="no-image">
+                  No Image
+                </div>
+              )}
+            </div>
+
+            {/* TEXT */}
+            <div className="cast-name">{c.name}</div>
+            <div className="cast-char">{c.character}</div>
+
           </div>
         ))}
       </div>

@@ -5,6 +5,7 @@ import MovieGrid from "../components/MovieGrid";
 import { useMovieQuery } from "../hooks/useMovieQuery";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,49 +44,57 @@ export default function Home() {
 
       {/* MAIN AREA */}
       <main>
-        {loading && <p>Loading...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
 
+        {/* EMPTY STATE */}
         {!loading && !error && data.length === 0 && (
           <p>No movies found</p>
         )}
 
-        <MovieGrid movies={data} loading={loading} />
+        {/* LOADING STATE → SKELETON */}
+        {loading ? (
+          <div className="movie-grid">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <MovieCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : (
+          <MovieGrid movies={data} loading={loading} />
+        )}
 
-        {/* 🔥 PAGINATION BURAYA GERİ GELİYOR */}
-        <div className="pagination">
-          <button
-            className="page-btn"
-            onClick={() =>
-              setSearchParams((prev) => {
-                const next = new URLSearchParams(prev);
-                next.set("page", String(Math.max(1, page - 1)));
-                return next;
-              })
-            }
-            disabled={page === 1}
-          >
-            ← Prev
-          </button>
+        {/* PAGINATION */}
+        {!loading && data.length > 0 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() =>
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.set("page", String(Math.max(1, page - 1)));
+                  return next;
+                })
+              }
+              disabled={page === 1}
+            >
+              ← Prev
+            </button>
 
-          <span className="page-indicator">Page {page}</span>
+            <span className="page-indicator">Page {page}</span>
 
-          <button
-            className="page-btn"
-            onClick={() =>
-              setSearchParams((prev) => {
-                const next = new URLSearchParams(prev);
-                next.set("page", String(page + 1));
-                return next;
-              })
-            }
-          >
-            Next →
-          </button>
-        </div>
-        <footer>
-          FrameFlow © {new Date().getFullYear()} | Built with React + TMDb API
-        </footer>
+            <button
+              className="page-btn"
+              onClick={() =>
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.set("page", String(page + 1));
+                  return next;
+                })
+              }
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

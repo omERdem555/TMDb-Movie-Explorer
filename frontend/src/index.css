@@ -587,3 +587,86 @@ footer {
   grid-template-columns: repeat(4, 1fr);
 }
 }
+
+
+
+/* =========================
+   SKELETON
+========================= */
+.skeleton {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.poster-skeleton {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #222;
+  border-radius: 10px;
+}
+
+.text-skeleton {
+  height: 12px;
+  background: #222;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.text-skeleton.title {
+  width: 70%;
+}
+
+.text-skeleton.sub {
+  width: 40%;
+}
+
+.cast-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* FIXED POSTER FRAME */
+.cast-image {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  position: relative;
+}
+
+/* IMAGE */
+.cast-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* NO IMAGE PLACEHOLDER */
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 12px;
+  background: #1a1a1a;
+}
+
+/* TEXT ALT BLOK */
+.cast-name {
+  font-size: 12px;
+  margin-top: 6px;
+  color: white;
+}
+
+.cast-char {
+  font-size: 10px;
+  color: #888;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

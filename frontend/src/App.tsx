@@ -12,6 +12,9 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/movie/:id" element={<MovieDetail />} />
       </Routes>
+        <footer>
+          FrameFlow © {new Date().getFullYear()} | Built with React + TMDb API
+        </footer>
     </BrowserRouter>
   );
 }
