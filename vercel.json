@@ -12,17 +12,5 @@
         "distDir": "dist"
       }
     }
-  ],
-
-    "experimentalServices": {
-        "frontend": {
-            "entrypoint": "frontend",
-            "routePrefix": "/",
-            "framework": "vite"
-        },
-        "backend": {
-            "entrypoint": "backend",
-            "routePrefix": "/_/backend"
-        }
-    }
+  ]
 }
