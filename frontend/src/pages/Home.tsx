@@ -53,8 +53,9 @@ export default function Home() {
         <MovieGrid movies={data} loading={loading} />
 
         {/* 🔥 PAGINATION BURAYA GERİ GELİYOR */}
-        <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+        <div className="pagination">
           <button
+            className="page-btn"
             onClick={() =>
               setSearchParams((prev) => {
                 const next = new URLSearchParams(prev);
@@ -64,12 +65,13 @@ export default function Home() {
             }
             disabled={page === 1}
           >
-            Prev
+            ← Prev
           </button>
 
-          <span>Page: {page}</span>
+          <span className="page-indicator">Page {page}</span>
 
           <button
+            className="page-btn"
             onClick={() =>
               setSearchParams((prev) => {
                 const next = new URLSearchParams(prev);
@@ -78,7 +80,7 @@ export default function Home() {
               })
             }
           >
-            Next
+            Next →
           </button>
         </div>
       </main>

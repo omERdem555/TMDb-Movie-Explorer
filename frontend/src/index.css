@@ -123,13 +123,54 @@ main {
   }
 
 
+/* =========================
+   PAGINATION
+========================= */
+.pagination {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #1f1f1f;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.25s ease;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #333;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  padding: 10px 16px;
+  background: #161616;
+  border: 1px solid #2d2d2d;
+  border-radius: 8px;
+  color: #ccc;
+  font-weight: bold;
+}
+
 
 /* =========================
    MOVIE DETAIL PAGE
 ========================= */
 
 .movie-detail-page {
-  padding: 40px;
+  padding: 90px 40px 40px;
   max-width: 1100px;
   margin: 0 auto;
   color: white;
@@ -284,7 +325,21 @@ main {
   }
 
   .movie-detail-page {
-    padding: 16px;
+  padding: 90px 16px 16px;
+  }
+
+
+
+  /*pagination*/
+  .pagination {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .page-btn {
+    flex: 1;
+    min-width: 120px;
+    font-size: larger;
   }
 
   /* POSTER TOP CENTER */
