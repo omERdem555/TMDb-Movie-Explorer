@@ -18,6 +18,12 @@ type MovieDetailData = {
     character: string;
     profilePath: string | null;
   }[];
+
+  similarMovies: {
+  id: number;
+  title: string;
+  posterUrl: string | null;
+}[];
 };
 
 export default function MovieDetail() {
@@ -100,6 +106,23 @@ export default function MovieDetail() {
             <div className="cast-name">{actor.name}</div>
             <div className="cast-char">{actor.character}</div>
           </div>
+        ))}
+      </div>
+
+      {/*SİMİLAR*/}
+      <h2 className="cast-title">Similar Movies</h2>
+
+      <div className="similar-grid">
+        {movie.similarMovies.map((similar) => (
+          <img
+            key={similar.id}
+            src={
+              similar.posterUrl ||
+              "https://via.placeholder.com/300x450?text=No+Image"
+            }
+            alt={similar.title}
+            className="similar-poster"
+          />
         ))}
       </div>
     </div>

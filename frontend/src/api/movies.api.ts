@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Movie } from "../types/movie.types";
+import type { Movie,} from "../types/movie.types";
 
 const API_BASE = "http://localhost:5000/api";
 

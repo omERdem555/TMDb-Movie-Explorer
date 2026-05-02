@@ -6,6 +6,7 @@ import {
   getMovieById,
   getMovieCredits,
   searchMovies,
+  getSimilarMovies
 } from "../services/tmdb.service";
 
 import { mapMovie } from "../utils/mapper";
@@ -197,9 +198,10 @@ export const getMovieDetail = async (req: Request, res: Response) => {
       });
     }
 
-    const [movie, credits] = await Promise.all([
+    const [movie, credits, similar] = await Promise.all([
       getMovieById(id),
       getMovieCredits(id),
+      getSimilarMovies(id),
     ]);
 
     return res.json({
@@ -225,6 +227,7 @@ export const getMovieDetail = async (req: Request, res: Response) => {
             ? `https://image.tmdb.org/t/p/w185${c.profile_path}`
             : null,
         })),
+        similarMovies: similar.results.slice(0, 8).map(mapMovie),
       },
     });
   } catch (err) {

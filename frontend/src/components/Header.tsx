@@ -74,7 +74,7 @@ export default function Header() {
 
       {/* BRAND */}
       <Link to="/?type=popular&page=1" style={{ color: "white" }}>
-        TMDb Explorer
+        Explorer
       </Link>
 
       <Link to="/?type=popular&page=1" style={linkStyle("popular")}>

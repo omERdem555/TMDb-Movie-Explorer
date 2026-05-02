@@ -358,6 +358,23 @@ main {
 }
 
 /* =========================
+   SIMILAR MOVIES
+========================= */
+.similar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.similar-poster {
+  width: 100%;
+  border-radius: 10px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+/* =========================
    TABLET
 ========================= */
 @media (max-width: 1024px) {
@@ -504,4 +521,8 @@ main {
   .cast-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  .similar-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
 }
