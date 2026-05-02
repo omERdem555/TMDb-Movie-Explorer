@@ -278,13 +278,14 @@ main {
   /* sidebar drawer */
   .sidebar {
     position: fixed;
-    top: 64px;
+    top: 75px;
     left: 0;
-    height: calc(100vh - 64px);
-    width: 150px;
+    height: calc(100vh - 20px);
+    width: 170px;
     transform: translateX(-100%);
     transition: 0.3s ease;
-    z-index: 2000;
+    z-index: 20000;
+    padding: 20px 15px;
   }
 
   .sidebar.open {
