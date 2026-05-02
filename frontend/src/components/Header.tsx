@@ -104,12 +104,10 @@ export default function Header() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search movies..."
           style={{
-            padding: "8px 12px",
             borderRadius: 6,
             border: "1px solid #333",
             background: "#1a1a1a",
-            color: "white",
-            width: 260,
+            color: "white"
           }}
         />
 
