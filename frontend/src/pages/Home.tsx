@@ -83,6 +83,9 @@ export default function Home() {
             Next →
           </button>
         </div>
+        <footer>
+          FrameFlow © {new Date().getFullYear()} | Built with React + TMDb API
+        </footer>
       </main>
     </div>
   );

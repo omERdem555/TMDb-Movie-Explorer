@@ -73,9 +73,6 @@ export default function Header() {
       </button>
 
       {/* BRAND */}
-      <Link to="/?type=popular&page=1" style={{ color: "white" }}>
-        Explorer
-      </Link>
 
       <Link to="/?type=popular&page=1" style={linkStyle("popular")}>
         Popular
