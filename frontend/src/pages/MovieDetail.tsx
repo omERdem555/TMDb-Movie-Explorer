@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { fetchMovieDetail } from "../api/movies.api";
-import CastSkeleton from "../components/skeleton/CastSkeleton";
 
 type MovieDetailData = {
   id: number;

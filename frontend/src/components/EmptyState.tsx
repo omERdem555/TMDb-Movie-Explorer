@@ -4,7 +4,7 @@ type Props = {
   genres: string;
 };
 
-export default function EmptyState({ type, search, genres }: Props) {
+export default function EmptyState({ search, genres }: Props) {
   const hasFilters = search || genres;
 
   const genreText = genres
