@@ -5,10 +5,11 @@ const BASE_URL = "https://api.themoviedb.org/3";
 
 const tmdbClient = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    Authorization: `Bearer ${env.TMDB_API_KEY}`,
+  params: {
+    api_key: env.TMDB_API_KEY,
   },
 });
+
 
 // 1. Popular movies
 export const getPopularMovies = async (page: number = 1) => {
