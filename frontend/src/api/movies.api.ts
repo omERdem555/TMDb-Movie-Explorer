@@ -1,7 +1,8 @@
 import axios from "axios";
 import type { Movie,} from "../types/movie.types";
 
-const API_BASE = "http://localhost:5000/api";
+// Use environment variable or default to /api for Vercel
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 type ApiResponse<T> = {
   success: boolean;
