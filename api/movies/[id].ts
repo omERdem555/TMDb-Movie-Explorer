@@ -24,7 +24,6 @@ export default async function handler(
 
   // Debug logging
   console.log("API Key available:", !!process.env.TMDB_API_KEY);
-  console.log("Request ID:", id);
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
@@ -43,6 +42,7 @@ export default async function handler(
     }
 
     const { id } = req.query;
+    console.log("Request ID:", id);
 
     if (!id || Array.isArray(id) || isNaN(Number(id))) {
       return res.status(400).json({
