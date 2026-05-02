@@ -9,8 +9,8 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const request = async <T>(url: string, params?: any): Promise<T> => {
   const res = await axios.get(url, { params });
 
-  if (!res.data?.success) {
-    throw new Error("API Error");
+  if (!res.data || !res.data.success) {
+    throw new Error("Invalid API response (not JSON)");
   }
 
   return res.data.data ?? [];
