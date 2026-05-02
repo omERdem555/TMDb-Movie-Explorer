@@ -284,7 +284,7 @@ main {
 ========================= */
 .movie-detail-page {
   padding: 90px 40px 40px;
-  max-width: 1100px;
+  max-width: 1700px;
   margin: 0 auto;
   color: white;
 }
@@ -334,9 +334,10 @@ main {
 
 .cast-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 16px;
   margin-top: 20px;
+  ;
 }
 
 .cast-card img {
@@ -362,7 +363,7 @@ main {
 ========================= */
 .similar-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 16px;
   margin-top: 20px;
 }
@@ -372,6 +373,15 @@ main {
   border-radius: 10px;
   aspect-ratio: 2 / 3;
   object-fit: cover;
+}
+
+.similar-link {
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.similar-link:hover {
+  transform: scale(1.04);
 }
 
 /* =========================

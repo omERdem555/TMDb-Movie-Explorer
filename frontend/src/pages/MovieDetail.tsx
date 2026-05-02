@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { fetchMovieDetail } from "../api/movies.api";
 
 type MovieDetailData = {
@@ -28,7 +28,7 @@ type MovieDetailData = {
 
 export default function MovieDetail() {
   const { id } = useParams();
-  const location = useLocation();
+const location = useLocation();
 
   const params = new URLSearchParams(location.search);
 
@@ -114,15 +114,22 @@ export default function MovieDetail() {
 
       <div className="similar-grid">
         {movie.similarMovies.map((similar) => (
-          <img
+          <Link
             key={similar.id}
-            src={
-              similar.posterUrl ||
-              "https://via.placeholder.com/300x450?text=No+Image"
-            }
-            alt={similar.title}
-            className="similar-poster"
-          />
+            to={`/movie/${similar.id}?from=${encodeURIComponent(
+              location.pathname + location.search
+            )}`}
+            className="similar-link"
+          >
+            <img
+              src={
+                similar.posterUrl ||
+                "https://via.placeholder.com/300x450?text=No+Image"
+              }
+              alt={similar.title}
+              className="similar-poster"
+            />
+          </Link>
         ))}
       </div>
     </div>
