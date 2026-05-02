@@ -60,7 +60,7 @@ export default function Header() {
         background: "#111",
         display: "flex",
         alignItems: "center",
-        padding: "0 16px",
+        padding: "10px 16px",
         gap: 12,
       }}
     >

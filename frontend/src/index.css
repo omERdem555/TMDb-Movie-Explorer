@@ -393,10 +393,10 @@ main {
   /* SIDEBAR DRAWER */
   .sidebar {
     position: fixed;
-    top: 115px;
+    top: 8%;
     left: 0;
 
-    height: calc(100vh - 75px);
+    height: calc(1000vh - 80px);
     width: 190px;
 
     transform: translateX(-100%);
