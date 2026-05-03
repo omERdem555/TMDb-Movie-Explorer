@@ -43,39 +43,58 @@ export const getMovies = async (req: Request, res: Response) => {
     const genres = String(req.query.genres || "");
     const page = validatePage(req.query.page);
 
-    let baseData: any[] = [];
+    const PER_PAGE = 20;
 
-    // 1. TYPE SEÇİMİ
-    for (let i = 1; i <= 10; i++) {
-      const data = await fetchMoviesByType(type, i);
-      baseData.push(...data.results);
-    }
+    let results: any[] = [];
 
-    // 2. SEARCH FILTER (TMDB yerine LOCAL)
+    // =========================
+    // 1. BASE DATA SELECTION
+    // =========================
+    const fetchAllPages = async () => {
+      const MAX_PAGES = search.length > 0 ? 50 : genres ? 30 : 20; // istersen optimize edilir
+      let all: any[] = [];
+
+      for (let i = 1; i <= MAX_PAGES; i++) {
+        const data = await fetchMoviesByType(type, i);
+        all.push(...data.results);
+      }
+
+      return all;
+    };
+
+    results = await fetchAllPages();
+
+    // =========================
+    // 2. SEARCH MODE (only if search exists)
+    // =========================
     if (search.length > 0) {
-      baseData = baseData.filter(m =>
+      results = results.filter(m =>
         m.title?.toLowerCase().includes(search)
       );
     }
 
-    // 3. GENRE FILTER
+    // =========================
+    // 3. GENRE FILTER (both modes)
+    // =========================
     if (genres) {
       const gs = genres.split(",").map(Number).filter(Boolean);
 
-      baseData = baseData.filter(m =>
+      results = results.filter(m =>
         gs.every(g => m.genre_ids?.includes(g))
       );
     }
 
-    // 4. PAGINATION
-    const PER_PAGE = 20;
+    // =========================
+    // 4. PAGINATION (FINAL STEP)
+    // =========================
     const start = (page - 1) * PER_PAGE;
+    const paginated = results.slice(start, start + PER_PAGE);
 
     return res.json({
       success: true,
       page,
-      totalPages: Math.ceil(baseData.length / PER_PAGE),
-      data: baseData.slice(start, start + PER_PAGE).map(mapMovie),
+      totalPages: Math.ceil(results.length / PER_PAGE),
+      data: paginated.map(mapMovie),
     });
 
   } catch (err) {

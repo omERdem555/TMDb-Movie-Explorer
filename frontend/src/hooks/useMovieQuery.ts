@@ -18,11 +18,16 @@ export const useMovieQuery = (
         setLoading(true);
         setError(null);
 
-        const result = await fetchMovies(type, page, genres, search);   
+        const result = await fetchMovies(
+          type,
+          page,
+          genres,
+          search
+        );
 
         setData(Array.isArray(result) ? result : []);
       } catch (err) {
-        console.error(err);
+        console.error("USE_MOVIE_QUERY_ERROR:", err);
         setError("Failed to load movies");
         setData([]);
       } finally {
@@ -33,5 +38,9 @@ export const useMovieQuery = (
     load();
   }, [type, genres, search, page]);
 
-  return { data, loading, error };
+  return {
+    data,
+    loading,
+    error,
+  };
 };
