@@ -51,7 +51,7 @@ export const getMovies = async (req: Request, res: Response) => {
     // 1. BASE DATA SELECTION
     // =========================
     const fetchAllPages = async () => {
-      const MAX_PAGES = search.length > 0 ? 50 : genres ? 30 : 20; // istersen optimize edilir
+      const MAX_PAGES = search.length > 0 ? 100 : genres ? 80 : 50; // istersen optimize edilir
       let all: any[] = [];
 
       for (let i = 1; i <= MAX_PAGES; i++) {
