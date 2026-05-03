@@ -42,6 +42,7 @@ export default function MovieCard({ movie }: Props) {
       },
       note
     );
+    window.location.reload()
   };
 
   return (

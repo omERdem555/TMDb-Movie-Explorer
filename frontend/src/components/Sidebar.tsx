@@ -12,6 +12,8 @@ export default function Sidebar({
   watchlistOnly,
   onToggleWatchlistOnly,
   onChangeGenres,
+  onToggleWatchedOnly,
+  watchedOnly
 }: any) {
   const [activeNote, setActiveNote] = useState<number | null>(null);
 
@@ -68,6 +70,8 @@ export default function Sidebar({
         Show only watchlist
       </label>
 
+
+
       <h3>Watched ({watched.length})</h3>
 
       {watched.map((m) => (
@@ -94,6 +98,16 @@ export default function Sidebar({
           )}
         </div>
       ))}
+
+
+      <label className="genre-item">
+        <input
+          type="checkbox"
+          checked={watchedOnly}
+          onChange={onToggleWatchedOnly}
+        />
+        Show only watched
+      </label>
     </aside>
   );
 }

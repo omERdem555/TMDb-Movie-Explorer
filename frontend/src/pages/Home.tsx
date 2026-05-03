@@ -8,7 +8,7 @@ import Header from "../components/Header";
 import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
 import EmptyState from "../components/EmptyState";
 import ErrorState from "../components/ErrorState";
-import { getWatchlist } from "../utils/MovieList.ts";
+import { getWatchlist, getWatchedlist } from "../utils/MovieList.ts";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,11 +22,18 @@ export default function Home() {
   let filteredData = data;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const watchlistOnly = searchParams.get("watchlist") === "true";
+  const watchedOnly = searchParams.get("watched") === "true";
 
   if (watchlistOnly) {
     const watchlistIds = new Set(getWatchlist().map((m) => m.id));
     filteredData = data.filter((movie) => watchlistIds.has(movie.id));
+  }
+
+  if (watchedOnly) {
+    const watchedIds = new Set(getWatchedlist().map((m) => m.id));
+    filteredData = data.filter((movie) => watchedIds.has(movie.id));
   }
 
   useEffect(() => {
@@ -62,6 +69,20 @@ export default function Home() {
           setSearchParams((prev) => {
             const next = new URLSearchParams(prev);
             next.set("genres", newGenres);
+            next.set("page", "1");
+            return next;
+          });
+        }}
+        onToggleWatchedOnly={() => {
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+
+            if (watchedOnly) {
+              next.delete("watched");
+            } else {
+              next.set("watched", "true");
+            }
+
             next.set("page", "1");
             return next;
           });
