@@ -7,6 +7,8 @@ import {
   getMovieCredits,
   searchMovies as tmdbSearchMovies,
   getSimilarMovies,
+  multiSearch,
+  getPersonMovieCredits
 } from "../services/tmdb.service";
 
 import { mapMovie } from "../utils/mapper";
@@ -52,31 +54,89 @@ export const getMovies = async (req: Request, res: Response) => {
      * =========================
      */
     if (search.length > 0) {
-      const data = await tmdbSearchMovies(search, page);
+      const multi = await multiSearch(search, page);
 
-      results = data.results;
+      let movieResults =
+        multi.results?.filter((item: any) => item.media_type === "movie") || [];
+
+      const personResults =
+        multi.results?.filter((item: any) => item.media_type === "person") || [];
 
       /**
-       * TYPE SORTING (STRICT ORDER)
+       * PERSON → known_for + credits
+       */
+      let actorMovies: any[] = [];
+
+      for (const person of personResults.slice(0, 3)) {
+        /**
+         * known_for
+         */
+        if (person.known_for) {
+          actorMovies.push(
+            ...person.known_for.filter(
+              (k: any) => k.media_type === "movie"
+            )
+          );
+        }
+
+        /**
+         * movie credits
+         */
+        const credits = await getPersonMovieCredits(person.id);
+
+        if (credits.cast) {
+          actorMovies.push(...credits.cast);
+        }
+      }
+
+      /**
+       * MERGE
+       * Film title direct matches first
+       */
+      let combinedResults = [...movieResults, ...actorMovies];
+
+      /**
+       * DEDUPLICATE by movie id
+       */
+      const uniqueMap = new Map();
+
+      combinedResults.forEach((movie) => {
+        if (movie?.id && !uniqueMap.has(movie.id)) {
+          uniqueMap.set(movie.id, movie);
+        }
+      });
+
+      results = Array.from(uniqueMap.values());
+
+      /**
+       * TYPE SORT
        */
       switch (type) {
         case "popular":
           results.sort(
-            (a, b) => (b.popularity || 0) - (a.popularity || 0)
+            (a: any, b: any) =>
+              (b.popularity || 0) - (a.popularity || 0)
           );
           break;
 
         case "top_rated":
           results.sort(
-            (a, b) => (b.vote_average || 0) - (a.vote_average || 0)
+            (a: any, b: any) =>
+              (b.vote_average || 0) - (a.vote_average || 0)
           );
           break;
 
         case "upcoming":
+          results = results.filter(
+            (m: any) =>
+              m.release_date &&
+              new Date(m.release_date) > new Date()
+          );
+
           results.sort(
-            (a, b) =>
-              new Date(b.release_date || 0).getTime() -
-              new Date(a.release_date || 0).getTime()
+            (a: any, b: any) =>
+              new Date(a.release_date).getTime() -
+              new Date(b.release_date).getTime()
           );
           break;
 
@@ -91,21 +151,27 @@ export const getMovies = async (req: Request, res: Response) => {
        * GENRE FILTER
        */
       if (genres) {
-        const selectedGenres = genres
+        const gs = genres
           .split(",")
           .map(Number)
           .filter(Boolean);
 
-        results = results.filter((movie) =>
-          selectedGenres.every((g) => movie.genre_ids?.includes(g))
+        results = results.filter((m: any) =>
+          gs.every((g) => m.genre_ids?.includes(g))
         );
       }
 
+      /**
+       * LOCAL PAGINATION
+       */
+      const start = (page - 1) * PER_PAGE;
+      const paginated = results.slice(start, start + PER_PAGE);
+
       return res.json({
         success: true,
-        page: data.page,
-        totalPages: data.total_pages,
-        data: results.map(mapMovie),
+        page,
+        totalPages: Math.ceil(results.length / PER_PAGE),
+        data: paginated.map(mapMovie),
       });
     }
 

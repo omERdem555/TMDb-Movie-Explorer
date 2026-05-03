@@ -74,7 +74,6 @@ export const getMoviesByType = async (type: string, page: number = 1) => {
   return res.data;
 };
 
-
 export const getMovieCredits = async (id: string) => {
   const res = await tmdbClient.get(`/movie/${id}/credits`);
   return res.data;
@@ -82,5 +81,21 @@ export const getMovieCredits = async (id: string) => {
 
 export const getSimilarMovies = async (id: string | number) => {
   const res = await tmdbClient.get(`/movie/${id}/similar`);
+  return res.data;
+};
+
+export const multiSearch = async (query: string, page = 1) => {
+  const res = await tmdbClient.get("/search/multi", {
+    params: {
+      query,
+      page,
+    },
+  });
+
+  return res.data;
+};
+
+export const getPersonMovieCredits = async (personId: number) => {
+  const res = await tmdbClient.get(`/person/${personId}/movie_credits`);
   return res.data;
 };
