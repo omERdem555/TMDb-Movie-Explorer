@@ -58,7 +58,6 @@ export default function Sidebar({
         </div>
       ))}
 
-      <hr />
 
       <label className="genre-item">
         <input
