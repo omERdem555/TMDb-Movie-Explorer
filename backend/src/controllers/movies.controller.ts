@@ -39,65 +39,127 @@ const fetchMoviesByType = async (type: string, page: number) => {
 export const getMovies = async (req: Request, res: Response) => {
   try {
     const type = String(req.query.type || "popular");
-    const search = String(req.query.search || "").trim().toLowerCase();
+    const search = String(req.query.search || "").trim();
     const genres = String(req.query.genres || "");
     const page = validatePage(req.query.page);
 
     const PER_PAGE = 20;
-
     let results: any[] = [];
 
-    // =========================
-    // 1. BASE DATA SELECTION
-    // =========================
-    const fetchAllPages = async () => {
-      const MAX_PAGES = search.length > 0 ? 100 : genres ? 80 : 50; // istersen optimize edilir
-      let all: any[] = [];
+    /**
+     * =========================
+     * SEARCH MODE (PRIMARY)
+     * =========================
+     */
+    if (search.length > 0) {
+      const data = await tmdbSearchMovies(search, page);
 
-      for (let i = 1; i <= MAX_PAGES; i++) {
-        const data = await fetchMoviesByType(type, i);
-        all.push(...data.results);
+      results = data.results;
+
+      /**
+       * TYPE SORTING (STRICT ORDER)
+       */
+      switch (type) {
+        case "popular":
+          results.sort(
+            (a, b) => (b.popularity || 0) - (a.popularity || 0)
+          );
+          break;
+
+        case "top_rated":
+          results.sort(
+            (a, b) => (b.vote_average || 0) - (a.vote_average || 0)
+          );
+          break;
+
+        case "upcoming":
+          results.sort(
+            (a, b) =>
+              new Date(b.release_date || 0).getTime() -
+              new Date(a.release_date || 0).getTime()
+          );
+          break;
+
+        default:
+          return res.status(400).json({
+            success: false,
+            error: "INVALID_TYPE",
+          });
       }
 
-      return all;
-    };
+      /**
+       * GENRE FILTER
+       */
+      if (genres) {
+        const selectedGenres = genres
+          .split(",")
+          .map(Number)
+          .filter(Boolean);
 
-    results = await fetchAllPages();
+        results = results.filter((movie) =>
+          selectedGenres.every((g) => movie.genre_ids?.includes(g))
+        );
+      }
 
-    // =========================
-    // 2. SEARCH MODE (only if search exists)
-    // =========================
-    if (search.length > 0) {
-      results = results.filter(m =>
-        m.title?.toLowerCase().includes(search)
-      );
+      return res.json({
+        success: true,
+        page: data.page,
+        totalPages: data.total_pages,
+        data: results.map(mapMovie),
+      });
     }
 
-    // =========================
-    // 3. GENRE FILTER (both modes)
-    // =========================
+    /**
+     * =========================
+     * NORMAL DISCOVER MODE
+     * =========================
+     */
+    const data = await fetchMoviesByType(type, page);
+
+    results = data.results;
+
+    /**
+     * GENRE FILTER (LOCAL)
+     */
     if (genres) {
-      const gs = genres.split(",").map(Number).filter(Boolean);
+      const MAX_PAGES = 20;
+      let allResults: any[] = [];
 
-      results = results.filter(m =>
-        gs.every(g => m.genre_ids?.includes(g))
+      for (let i = 1; i <= MAX_PAGES; i++) {
+        const pageData = await fetchMoviesByType(type, i);
+        allResults.push(...pageData.results);
+      }
+
+      const selectedGenres = genres
+        .split(",")
+        .map(Number)
+        .filter(Boolean);
+
+      results = allResults.filter((movie) =>
+        selectedGenres.every((g) => movie.genre_ids?.includes(g))
       );
-    }
 
-    // =========================
-    // 4. PAGINATION (FINAL STEP)
-    // =========================
-    const start = (page - 1) * PER_PAGE;
-    const paginated = results.slice(start, start + PER_PAGE);
+      const start = (page - 1) * PER_PAGE;
+      const paginated = results.slice(start, start + PER_PAGE);
+
+      return res.json({
+        success: true,
+        page,
+        totalPages: Math.ceil(results.length / PER_PAGE),
+        data: paginated.map(mapMovie),
+      });
+    }
 
     return res.json({
       success: true,
-      page,
-      totalPages: Math.ceil(results.length / PER_PAGE),
-      data: paginated.map(mapMovie),
+      page: data.page,
+      totalPages: data.total_pages,
+      data: results.map(mapMovie),
     });
 
   } catch (err) {
+    console.error("GET_MOVIES_ERROR:", err);
+
     return res.status(500).json({
       success: false,
       error: "FETCH_ERROR",
