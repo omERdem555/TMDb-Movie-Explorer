@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import movieRoutes from "./routes/movies.routes";
+import "./config/env";
 
 const app = express();
 const PORT = 5000;
@@ -14,7 +15,7 @@ app.use(express.json());
 /**
  * Routes
  */
-app.use("/api/movies", movieRoutes);
+app.use("/movies", movieRoutes);
 
 /**
  * Health check

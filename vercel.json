@@ -1,21 +1,13 @@
 {
-  "version": 2,
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/movies.ts"
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "vite"
     },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/index.html"
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/api"
     }
-  ]
+  }
 }

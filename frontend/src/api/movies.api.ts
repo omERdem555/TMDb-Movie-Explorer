@@ -1,19 +1,22 @@
 import axios from "axios";
-import type { Movie} from "../types/movie.types";
+import type { Movie,} from "../types/movie.types";
 
 // Use environment variable or default to /api for Vercel
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
-
+type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+};
 
 const request = async <T>(url: string, params?: any): Promise<T> => {
-  const res = await axios.get(url, { params });
+  const res = await axios.get<ApiResponse<T>>(url, { params });
 
-  if (!res.data || !res.data.success) {
-    throw new Error("Invalid API response (not JSON)");
+  if (!res.data?.success) {
+    throw new Error("API Error");
   }
 
-  return res.data.data ?? [];
+  return res.data.data;
 };
 
 // DISCOVER
@@ -37,8 +40,8 @@ export const searchMovies = (
   page = 1,
   type: string
 ) => {
-  return request<Movie[]>(`${API_BASE}/movies`, {
-    search: query,
+  return request<Movie[]>(`${API_BASE}/movies/search`, {
+    query,
     page,
     type,
   });
@@ -46,16 +49,11 @@ export const searchMovies = (
 
 // DETAIL
 export const fetchMovieDetail = async (id: string) => {
-  try {
-    const res = await axios.get(`${API_BASE}/movies/${id}`);
-    
-    if (!res.data) {
-      throw new Error("No data received from API");
-    }
+  const res = await axios.get(`${API_BASE}/movies/${id}`);
 
-    return res.data?.data || res.data;
-  } catch (error) {
-    console.error(`API Error: /movies/${id}`, error);
-    throw error;
+  if (res.data?.data) {
+    return res.data.data;
   }
+
+  return res.data;
 };
