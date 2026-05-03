@@ -1,7 +1,6 @@
 import axios from "axios";
-import type { Movie,} from "../types/movie.types";
+import type { Movie } from "../types/movie.types";
 
-// Use environment variable or default to /api for Vercel
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 type ApiResponse<T> = {
@@ -34,14 +33,14 @@ export const fetchMovies = (
   });
 };
 
-// SEARCH
+// SEARCH (FIXED PARAM NAME)
 export const searchMovies = (
   query: string,
   page = 1,
-  type: string
+  type?: string
 ) => {
   return request<Movie[]>(`${API_BASE}/movies/search`, {
-    query,
+    query,   // ✔ backend bunu bekliyor
     page,
     type,
   });

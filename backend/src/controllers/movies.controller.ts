@@ -22,14 +22,11 @@ const validatePage = (page: unknown) => {
 const fetchMoviesByType = async (type: string, page: number) => {
   switch (type) {
     case "popular":
-      return await getPopularMovies(page);
-
+      return getPopularMovies(page);
     case "top_rated":
-      return await getTopRatedMovies(page);
-
+      return getTopRatedMovies(page);
     case "upcoming":
-      return await getUpcomingMovies(page);
-
+      return getUpcomingMovies(page);
     default:
       throw new Error("INVALID_TYPE");
   }
@@ -46,81 +43,40 @@ export const getMovies = async (req: Request, res: Response) => {
     const genres = String(req.query.genres || "");
     const page = validatePage(req.query.page);
 
-    let data;
+    let all: any[] = [];
 
-    /**
-     * SEARCH or GENRE MODE
-     * Multi-page local filtering
-     */
-    if (search.length > 0 || genres) {
-      const MAX_PAGES = search ? 20 : 10;
+    const MAX = search ? 20 : 10;
 
-      let allResults: any[] = [];
-
-      for (let i = 1; i <= MAX_PAGES; i++) {
-        const pageData = await fetchMoviesByType(type, i);
-        allResults.push(...pageData.results);
-      }
-
-      /**
-       * TITLE FILTER
-       */
-      if (search) {
-        allResults = allResults.filter((movie) =>
-          movie.title?.toLowerCase().includes(search)
-        );
-      }
-
-      /**
-       * GENRE FILTER
-       */
-      if (genres) {
-        const selectedGenres = genres
-          .split(",")
-          .map(Number)
-          .filter(Boolean);
-
-        allResults = allResults.filter((movie) =>
-          selectedGenres.every((g) => movie.genre_ids?.includes(g))
-        );
-      }
-
-      /**
-       * LOCAL PAGINATION
-       */
-      const PER_PAGE = 20;
-      const start = (page - 1) * PER_PAGE;
-      const paginatedResults = allResults.slice(start, start + PER_PAGE);
-
-      return res.json({
-        success: true,
-        page,
-        totalPages: Math.ceil(allResults.length / PER_PAGE),
-        data: paginatedResults.map(mapMovie),
-      });
+    for (let i = 1; i <= MAX; i++) {
+      const data = await fetchMoviesByType(type, i);
+      all.push(...data.results);
     }
 
-    /**
-     * NORMAL DISCOVER MODE
-     */
-    data = await fetchMoviesByType(type, page);
+    if (search) {
+      all = all.filter((m) =>
+        m.title?.toLowerCase().includes(search)
+      );
+    }
+
+    if (genres) {
+      const gs = genres.split(",").map(Number).filter(Boolean);
+      all = all.filter((m) =>
+        gs.every((g) => m.genre_ids?.includes(g))
+      );
+    }
+
+    const PER_PAGE = 20;
+    const start = (page - 1) * PER_PAGE;
 
     return res.json({
       success: true,
-      page: data.page,
-      totalPages: data.total_pages,
-      data: data.results.map(mapMovie),
+      page,
+      totalPages: Math.ceil(all.length / PER_PAGE),
+      data: all.slice(start, start + PER_PAGE).map(mapMovie),
     });
-  } catch (err: any) {
-    console.error("GET_MOVIES_ERROR:", err);
 
-    if (err.message === "INVALID_TYPE") {
-      return res.status(400).json({
-        success: false,
-        error: "INVALID_TYPE",
-      });
-    }
-
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       error: "FETCH_ERROR",
@@ -152,9 +108,9 @@ export const searchMovies = async (req: Request, res: Response) => {
       totalPages: data.total_pages,
       data: data.results.map(mapMovie),
     });
-  } catch (err) {
-    console.error("SEARCH_MOVIES_ERROR:", err);
 
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       error: "SEARCH_FETCH_ERROR",
@@ -210,9 +166,9 @@ export const getMovieDetail = async (req: Request, res: Response) => {
         similarMovies: similar.results.slice(0, 8).map(mapMovie),
       },
     });
-  } catch (err) {
-    console.error("GET_MOVIE_DETAIL_ERROR:", err);
 
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       error: "DETAIL_FETCH_ERROR",
