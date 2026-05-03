@@ -5,8 +5,8 @@ import {
   getUpcomingMovies,
   getMovieById,
   getMovieCredits,
-  searchMovies,
-  getSimilarMovies
+  searchMovies as tmdbSearchMovies,
+  getSimilarMovies,
 } from "../services/tmdb.service";
 
 import { mapMovie } from "../utils/mapper";
@@ -16,6 +16,29 @@ const validatePage = (page: unknown) => {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
 };
 
+/**
+ * Shared fetcher by category
+ */
+const fetchMoviesByType = async (type: string, page: number) => {
+  switch (type) {
+    case "popular":
+      return await getPopularMovies(page);
+
+    case "top_rated":
+      return await getTopRatedMovies(page);
+
+    case "upcoming":
+      return await getUpcomingMovies(page);
+
+    default:
+      throw new Error("INVALID_TYPE");
+  }
+};
+
+/**
+ * MAIN DISCOVER / FILTER CONTROLLER
+ * /api/movies?type=popular&search=&genres=&page=1
+ */
 export const getMovies = async (req: Request, res: Response) => {
   try {
     const type = String(req.query.type || "popular");
@@ -25,167 +48,124 @@ export const getMovies = async (req: Request, res: Response) => {
 
     let data;
 
-    // =========================
-    // SEARCH MODE (TYPE İÇİNDE 20 PAGE FETCH)
-    // =========================
-    if (search.length > 0) {
-      const MAX_PAGES = 20;
+    /**
+     * SEARCH or GENRE MODE
+     * Multi-page local filtering
+     */
+    if (search.length > 0 || genres) {
+      const MAX_PAGES = search ? 20 : 10;
 
       let allResults: any[] = [];
 
       for (let i = 1; i <= MAX_PAGES; i++) {
-        let pageData;
-
-        switch (type) {
-          case "popular":
-            pageData = await getPopularMovies(i);
-            break;
-
-          case "top_rated":
-            pageData = await getTopRatedMovies(i);
-            break;
-
-          case "upcoming":
-            pageData = await getUpcomingMovies(i);
-            break;
-
-          default:
-            return res.status(400).json({
-              success: false,
-              error: "INVALID_TYPE",
-            });
-        }
-
+        const pageData = await fetchMoviesByType(type, i);
         allResults.push(...pageData.results);
       }
 
-      // TITLE FILTER
-      let filtered = allResults.filter((movie) =>
-        movie.title?.toLowerCase().includes(search)
-      );
+      /**
+       * TITLE FILTER
+       */
+      if (search) {
+        allResults = allResults.filter((movie) =>
+          movie.title?.toLowerCase().includes(search)
+        );
+      }
 
-      // GENRE FILTER
+      /**
+       * GENRE FILTER
+       */
       if (genres) {
         const selectedGenres = genres
           .split(",")
           .map(Number)
           .filter(Boolean);
 
-        filtered = filtered.filter((movie) =>
+        allResults = allResults.filter((movie) =>
           selectedGenres.every((g) => movie.genre_ids?.includes(g))
         );
       }
 
-      // LOCAL PAGINATION
+      /**
+       * LOCAL PAGINATION
+       */
       const PER_PAGE = 20;
       const start = (page - 1) * PER_PAGE;
-      const paginatedResults = filtered.slice(start, start + PER_PAGE);
+      const paginatedResults = allResults.slice(start, start + PER_PAGE);
 
       return res.json({
         success: true,
         page,
-        totalPages: Math.ceil(filtered.length / PER_PAGE),
+        totalPages: Math.ceil(allResults.length / PER_PAGE),
         data: paginatedResults.map(mapMovie),
       });
     }
 
-    // =========================
-    // GENRE ONLY MODE (MULTI PAGE FETCH)
-    // =========================
-    if (genres) {
-      const MAX_PAGES = 20;
-      let allResults: any[] = [];
+    /**
+     * NORMAL DISCOVER MODE
+     */
+    data = await fetchMoviesByType(type, page);
 
-      for (let i = 1; i <= MAX_PAGES; i++) {
-        let pageData;
-
-        switch (type) {
-          case "popular":
-            pageData = await getPopularMovies(i);
-            break;
-
-          case "top_rated":
-            pageData = await getTopRatedMovies(i);
-            break;
-
-          case "upcoming":
-            pageData = await getUpcomingMovies(i);
-            break;
-
-          default:
-            return res.status(400).json({
-              success: false,
-              error: "INVALID_TYPE",
-            });
-        }
-
-        allResults.push(...pageData.results);
-      }
-
-      const selectedGenres = genres
-        .split(",")
-        .map(Number)
-        .filter(Boolean);
-
-      const filtered = allResults.filter((movie) =>
-        selectedGenres.every((g) => movie.genre_ids?.includes(g))
-      );
-
-      const PER_PAGE = 20;
-      const start = (page - 1) * PER_PAGE;
-      const paginatedResults = filtered.slice(start, start + PER_PAGE);
-
-      return res.json({
-        success: true,
-        page,
-        totalPages: Math.ceil(filtered.length / PER_PAGE),
-        data: paginatedResults.map(mapMovie),
-      });
-    }
-
-
-    // =========================
-    // NORMAL DISCOVER MODE
-    // =========================
-    switch (type) {
-      case "popular":
-        data = await getPopularMovies(page);
-        break;
-
-      case "top_rated":
-        data = await getTopRatedMovies(page);
-        break;
-
-      case "upcoming":
-        data = await getUpcomingMovies(page);
-        break;
-
-      default:
-        return res.status(400).json({
-          success: false,
-          error: "INVALID_TYPE",
-        });
-    }
-
-    let results = data.results;
-
-
-    res.json({
+    return res.json({
       success: true,
       page: data.page,
       totalPages: data.total_pages,
-      data: results.map(mapMovie),
+      data: data.results.map(mapMovie),
     });
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    console.error("GET_MOVIES_ERROR:", err);
 
-    res.status(500).json({
+    if (err.message === "INVALID_TYPE") {
+      return res.status(400).json({
+        success: false,
+        error: "INVALID_TYPE",
+      });
+    }
+
+    return res.status(500).json({
       success: false,
       error: "FETCH_ERROR",
     });
   }
 };
 
+/**
+ * TRUE TMDB SEARCH ENDPOINT
+ * /api/movies/search?query=batman&page=1
+ */
+export const searchMovies = async (req: Request, res: Response) => {
+  try {
+    const query = String(req.query.query || "").trim();
+    const page = validatePage(req.query.page);
+
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        error: "MISSING_QUERY",
+      });
+    }
+
+    const data = await tmdbSearchMovies(query, page);
+
+    return res.json({
+      success: true,
+      page: data.page,
+      totalPages: data.total_pages,
+      data: data.results.map(mapMovie),
+    });
+  } catch (err) {
+    console.error("SEARCH_MOVIES_ERROR:", err);
+
+    return res.status(500).json({
+      success: false,
+      error: "SEARCH_FETCH_ERROR",
+    });
+  }
+};
+
+/**
+ * MOVIE DETAIL
+ * /api/movies/:id
+ */
 export const getMovieDetail = async (req: Request, res: Response) => {
   try {
     const rawId = req.params.id;
@@ -218,7 +198,6 @@ export const getMovieDetail = async (req: Request, res: Response) => {
           ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
           : null,
 
-        // 🔥 CAST EKLENDİ
         cast: credits.cast.slice(0, 12).map((c: any) => ({
           id: c.id,
           name: c.name,
@@ -227,11 +206,12 @@ export const getMovieDetail = async (req: Request, res: Response) => {
             ? `https://image.tmdb.org/t/p/w185${c.profile_path}`
             : null,
         })),
+
         similarMovies: similar.results.slice(0, 8).map(mapMovie),
       },
     });
   } catch (err) {
-    console.log(err);
+    console.error("GET_MOVIE_DETAIL_ERROR:", err);
 
     return res.status(500).json({
       success: false,
