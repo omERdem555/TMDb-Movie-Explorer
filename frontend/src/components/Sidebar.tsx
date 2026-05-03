@@ -60,6 +60,15 @@ export default function Sidebar({
 
       <hr />
 
+      <label className="genre-item">
+        <input
+          type="checkbox"
+          checked={watchlistOnly}
+          onChange={onToggleWatchlistOnly}
+        />
+        Show only watchlist
+      </label>
+
       <h3>Watched ({watched.length})</h3>
 
       {watched.map((m) => (

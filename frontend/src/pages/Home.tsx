@@ -58,7 +58,7 @@ export default function Home() {
             return next;
           });
         }}
-        onChangeGenres={(newGenres) => {
+        onChangeGenres={(newGenres: string) => {
           setSearchParams((prev) => {
             const next = new URLSearchParams(prev);
             next.set("genres", newGenres);
