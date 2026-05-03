@@ -123,6 +123,45 @@ header input {
   letter-spacing: 0.5px;
 }
 
+.sidebar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+.sidebar-item a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.sidebar-item a:hover {
+  color: #fff;
+}
+
+.note-btn {
+  font-size: 11px;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.note-btn:hover {
+  color: #fff;
+}
+
+.note-box {
+  font-size: 12px;
+  color: #aaa;
+  padding-left: 10px;
+  border-left: 2px solid #333;
+  margin-top: 4px;
+}
+
 /* GENRE GROUP */
 .genre-group {
   display: flex;
@@ -255,6 +294,8 @@ main {
   font-weight: 500;
 }
 
+
+/*movie list*/
 .watchlist-btn {
   width: 100%;
   margin-top: 4px;
@@ -269,6 +310,14 @@ main {
 
 .watchlist-btn:hover {
   background: #444;
+}
+.watched-btn {
+  margin-top: 6px;
+  background: #2a2a2a;
+}
+
+.watched-btn:hover {
+  background: #3a3a3a;
 }
 /* =========================
    MOBILE MENU BUTTON
