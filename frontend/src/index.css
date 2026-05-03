@@ -257,19 +257,19 @@ main {
 
 .watchlist-btn {
   width: 100%;
+  margin-top: 4px;
   padding: 8px;
   border: none;
   background: #2e2e2e;
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.2s ease;
+  border-radius: 6px;
 }
 
 .watchlist-btn:hover {
-  background: #2e2e2e;
+  background: #444;
 }
-
 /* =========================
    MOBILE MENU BUTTON
 ========================= */

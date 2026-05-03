@@ -1,6 +1,11 @@
 import type { Movie } from "../types/movie.types";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toggleWatchlist, isInWatchlist } from "../utils/watchlist";
+import {
+  toggleWatchlist,
+  isInWatchlist,
+  isInWatchedlist,
+  addToWatched,
+} from "../utils/MovieList";
 
 type Props = {
   movie: Movie;
@@ -9,18 +14,36 @@ type Props = {
 export default function MovieCard({ movie }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
+
   const saved = isInWatchlist(movie.id);
-const handleWatchlist = (e: React.MouseEvent) => {
-  e.stopPropagation();
+  const watched = isInWatchedlist(movie.id);
 
-  toggleWatchlist({
-    id: movie.id,
-    title: movie.title,
-    posterUrl: movie.posterUrl,
-  });
+  const handleWatchlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
 
-  window.location.reload();
-};
+    toggleWatchlist({
+      id: movie.id,
+      title: movie.title,
+      posterUrl: movie.posterUrl,
+    });
+  };
+  
+    const handleWatched = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const note = prompt("Add note for this movie (optional):") || "";
+
+    addToWatched(
+      {
+        id: movie.id,
+        title: movie.title,
+        posterUrl: movie.posterUrl,
+      },
+      note
+    );
+  };
+
+
   return (
     <div
       onClick={() =>
@@ -31,8 +54,8 @@ const handleWatchlist = (e: React.MouseEvent) => {
         )
       }
       style={{
-        width: "100%",          // 🔥 GRID FIX
-        height: "100%",        // 🔥 GRID FIX
+        width: "100%",          
+        height: "100%",        
         cursor: "pointer",
         borderRadius: 10,
         overflow: "hidden",
@@ -142,6 +165,17 @@ const handleWatchlist = (e: React.MouseEvent) => {
         </p>
           <button onClick={handleWatchlist} className="watchlist-btn">
             {saved ? "✓ Saved" : "+ Watchlist"}
+          </button>
+
+          <button
+            onClick={handleWatched}
+            className="watchlist-btn"
+            style={{
+              marginTop: 6,
+              background: watched ? "#1f6f3a" : "#333",
+            }}
+          >
+            {watched ? "✓ Watched" : "Mark Watched"}
           </button>
       </div>
     </div>

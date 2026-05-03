@@ -1,6 +1,6 @@
 import { GENRES } from "../constants/genres";
 import { useMemo } from "react";
-import { getWatchlist } from "../utils/watchlist";
+import { getWatchlist, getWatchedlist  } from "../utils/MovieList.ts";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -23,6 +23,7 @@ export default function Sidebar({
   }, [selectedGenres]);
 
   const watchlist = getWatchlist();
+  const watched = getWatchedlist();
 
   const toggleGenre = (id: number) => {
     const current = new Set(selectedSet);
@@ -106,6 +107,20 @@ export default function Sidebar({
           ))
         )}
       </div>
+
+      <h3>Watched ({watched.length})</h3>
+
+      {watched.length === 0 ? (
+        <p style={{ fontSize: 12, color: "#777" }}>No watched movies</p>
+      ) : (
+        watched.map((m) => (
+          <Link key={m.id} to={`/movie/${m.id}`}>
+            • {m.title}
+            {m.note ? ` (note: ${m.note})` : ""}
+          </Link>
+        ))
+      )}
+
     </aside>
   );
 }

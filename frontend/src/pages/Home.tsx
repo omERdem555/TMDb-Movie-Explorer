@@ -8,7 +8,7 @@ import Header from "../components/Header";
 import MovieCardSkeleton from "../components/skeleton/MovieCardSkeleton";
 import EmptyState from "../components/EmptyState";
 import ErrorState from "../components/ErrorState";
-import { getWatchlist } from "../utils/watchlist";
+import { getWatchlist } from "../utils/MovieList.ts";
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
