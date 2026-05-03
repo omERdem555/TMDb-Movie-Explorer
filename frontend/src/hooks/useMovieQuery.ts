@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchMovies, searchMovies } from "../api/movies.api";
+import { fetchMovies } from "../api/movies.api";
 import type { Movie } from "../types/movie.types";
 
 export const useMovieQuery = (
@@ -18,13 +18,7 @@ export const useMovieQuery = (
         setLoading(true);
         setError(null);
 
-        let result: Movie[];
-
-        if (search && search.trim().length > 0) {
-          result = await searchMovies(search, page, type);
-        } else {
-          result = await fetchMovies(type, page, genres, search);
-        }
+        const result = await fetchMovies(type, page, genres, search);   
 
         setData(Array.isArray(result) ? result : []);
       } catch (err) {

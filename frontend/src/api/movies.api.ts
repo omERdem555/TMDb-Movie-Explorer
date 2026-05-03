@@ -33,18 +33,6 @@ export const fetchMovies = (
   });
 };
 
-// SEARCH (FIXED PARAM NAME)
-export const searchMovies = (
-  query: string,
-  page = 1,
-  type?: string
-) => {
-  return request<Movie[]>(`${API_BASE}/movies/search`, {
-    query,   // ✔ backend bunu bekliyor
-    page,
-    type,
-  });
-};
 
 // DETAIL
 export const fetchMovieDetail = async (id: string) => {

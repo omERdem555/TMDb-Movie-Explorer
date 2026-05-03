@@ -43,40 +43,42 @@ export const getMovies = async (req: Request, res: Response) => {
     const genres = String(req.query.genres || "");
     const page = validatePage(req.query.page);
 
-    let all: any[] = [];
+    let baseData: any[] = [];
 
-    const MAX = search ? 20 : 10;
-
-    for (let i = 1; i <= MAX; i++) {
+    // 1. TYPE SEÇİMİ
+    for (let i = 1; i <= 10; i++) {
       const data = await fetchMoviesByType(type, i);
-      all.push(...data.results);
+      baseData.push(...data.results);
     }
 
-    if (search) {
-      all = all.filter((m) =>
+    // 2. SEARCH FILTER (TMDB yerine LOCAL)
+    if (search.length > 0) {
+      baseData = baseData.filter(m =>
         m.title?.toLowerCase().includes(search)
       );
     }
 
+    // 3. GENRE FILTER
     if (genres) {
       const gs = genres.split(",").map(Number).filter(Boolean);
-      all = all.filter((m) =>
-        gs.every((g) => m.genre_ids?.includes(g))
+
+      baseData = baseData.filter(m =>
+        gs.every(g => m.genre_ids?.includes(g))
       );
     }
 
+    // 4. PAGINATION
     const PER_PAGE = 20;
     const start = (page - 1) * PER_PAGE;
 
     return res.json({
       success: true,
       page,
-      totalPages: Math.ceil(all.length / PER_PAGE),
-      data: all.slice(start, start + PER_PAGE).map(mapMovie),
+      totalPages: Math.ceil(baseData.length / PER_PAGE),
+      data: baseData.slice(start, start + PER_PAGE).map(mapMovie),
     });
 
   } catch (err) {
-    console.error(err);
     return res.status(500).json({
       success: false,
       error: "FETCH_ERROR",
