@@ -108,6 +108,7 @@ header input {
 
   height: calc(100vh - 64px);
   overflow-y: auto;
+  overflow-x: hidden;
 
   padding: 24px 18px;
 }
@@ -558,10 +559,10 @@ footer {
   /* SIDEBAR DRAWER */
   .sidebar {
     position: fixed;
-    top: 8%;
+    top: 64px;
     left: 0;
 
-    height: calc(1000vh - 80px);
+    height: calc(1000vh - 64px);
     width: 190px;
 
     transform: translateX(-100%);
@@ -571,13 +572,15 @@ footer {
 
     padding: 22px 14px;
 
-    background: rgba(15, 15, 15, 0.98);
-    backdrop-filter: blur(1px);
-    opacity: 0.95;
+    background: rgba(10, 10, 10, 0.96);
+    backdrop-filter: blur(10px);
+
     background-color: rgba(0, 0, 0, 0.748); /* yarı saydam mavi */
 
-    border-right: 1px solid #2a2a2a;
-    box-shadow: 1px 10px 100px rgba(84, 84, 84, 0.426);
+    border-right: 1px solid rgba(255, 255, 255, 0.96);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
+
+    scrollbar-width: thin;
   }
 
   .sidebar.open {
@@ -587,6 +590,10 @@ footer {
   .sidebar-title {
     font-size: 17px;
     margin-bottom: 14px;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    width: 4px;
   }
 
   .genre-item {
