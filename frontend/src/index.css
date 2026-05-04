@@ -317,7 +317,8 @@ main {
 }
 
 .watched-btn:hover {
-  background: #3a3a3a;
+  background: #444;
+  transform: translateY(-1px);
 }
 /* =========================
    MOBILE MENU BUTTON

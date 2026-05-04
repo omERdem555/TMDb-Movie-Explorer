@@ -45,6 +45,12 @@ export default function MovieCard({ movie }: Props) {
     window.location.reload()
   };
 
+  const getRatingColor = (rating: number) => {
+  if (rating >= 7.5) return "#2ecc71"; // green
+  if (rating >= 5) return "#f1c40f";   // yellow
+  return "#e74c3c";                    // red
+};
+
   return (
     <div
       onClick={() =>
@@ -77,7 +83,15 @@ export default function MovieCard({ movie }: Props) {
           <div>No Image</div>
         )}
 
-        <div className="rating-badge">⭐ {movie.rating}</div>
+        <div
+          className="rating-badge"
+          style={{
+            background: getRatingColor(movie.rating),
+            color: "#fff",
+          }}
+        >
+          ⭐ {movie.rating}
+        </div>
       </div>
 
       {/* CONTENT */}
