@@ -562,7 +562,9 @@ footer {
     top: 64px;
     left: 0;
 
-    height: calc(1000vh - 64px);
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    overflow-x: hidden;
     width: 190px;
 
     transform: translateX(-100%);
@@ -581,6 +583,7 @@ footer {
     box-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
 
     scrollbar-width: thin;
+    scrollbar-color: #444 transparent;
   }
 
   .sidebar.open {
@@ -594,6 +597,11 @@ footer {
 
   .sidebar::-webkit-scrollbar {
     width: 4px;
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
   }
 
   .genre-item {
